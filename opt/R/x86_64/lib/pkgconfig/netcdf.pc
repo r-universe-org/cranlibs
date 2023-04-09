@@ -1,0 +1,13 @@
+prefix=/opt/R/x86_64
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+ccompiler=gcc
+
+Name: netcdf-c
+Description: NetCDF Client Library for C
+URL: http://www.unidata.ucar.edu/netcdf
+Version: 4.8.1
+Libs: -L${libdir} -L/opt/R/x86_64/lib -lnetcdf -lhdf5_hl -lhdf5 -lm -lz -lcurl -L/opt/R/x86_64/lib -lsz
+Libs.private: -lhdf5_hl -lhdf5 -lm -lz -lcurl -L/opt/R/x86_64/lib -lsz
+Cflags: -I${includedir}

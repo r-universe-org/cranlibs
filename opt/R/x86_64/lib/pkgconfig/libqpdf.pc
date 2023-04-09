@@ -1,0 +1,11 @@
+prefix=/opt/R/x86_64
+exec_prefix=${prefix}
+libdir=/opt/R/x86_64/lib
+includedir=/opt/R/x86_64/include
+
+Name: libqpdf
+Description: PDF transformation library
+Version: 11.1.1
+Requires.private: zlib, libjpeg, openssl >= 1.1.0
+Libs: -L${libdir} -lqpdf
+Cflags: -I${includedir}

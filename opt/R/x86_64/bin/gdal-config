@@ -1,0 +1,74 @@
+#!/bin/sh
+CONFIG_LIBS="-L/opt/R/x86_64/lib -lgdal"
+CONFIG_DEP_LIBS="-lcrypto  -L/opt/R/x86_64/lib -lfreexl -liconv -L/opt/R/x86_64/lib -lgeos_c -lgeos -lm -lstdc++ -lwebp -lodbc -lodbcinst -L/opt/R/x86_64/lib -lexpat -L/opt/R/x86_64/lib -lopenjp2 -lm -L/opt/R/x86_64/lib -L/opt/R/x86_64/lib -lnetcdf -lhdf5_hl -lhdf5 -lm -lz -lcurl -L/opt/R/x86_64/lib -lsz -lhdf5 -lmfhdf -ldf -lpng -L/opt/R/x86_64/lib -lpq -lpgcommon -lpgport -lm -lzstd -llzma -lproj -L/opt/R/x86_64/lib -lproj -lc++ -lm -ldl -lsqlite3 -lz -ltiff -lwebp -llzma -ljpeg -lz -lwebp -lm -D_THREAD_SAFE -pthread -lsharpyuv -lm -D_THREAD_SAFE -pthread -llzma -pthread -lpthread -ljpeg -lz -lcurl -lsz -L/opt/R/x86_64/lib -lsqlite3 -ljpeg -lz -lpthread -ldl  -lpcre2-8   -lcurl        -liconv  -lxml2 -lpthread -lz -lm      "
+CONFIG_PREFIX="/opt/R/x86_64"
+CONFIG_CFLAGS="-I/opt/R/x86_64/include"
+CONFIG_DATA="/opt/R/x86_64/share/gdal"
+CONFIG_VERSION="3.5.3"
+CONFIG_OGR_ENABLED=yes
+CONFIG_GNM_ENABLED=yes
+CONFIG_FORMATS="derived gtiff hfa mem vrt  aaigrid adrg aigrid airsar arg blx bmp bsb cals ceos ceos2 coasp cosar ctg dimap dted elas envisat ers esric fit gff gsg gxf hf2 idrisi ilwis iris iso8211 jaxapalsar jdem kmlsuperoverlay l1b leveller map mrf msgn ngsgeoid nitf northwood pds prf r raw rmf rs2 safe saga sdts sentinel2 sgi sigdem srtmhgt stacit stacta terragen tga til tsx usgsdem xpm xyz zarr zmap rik ozi eeda plmosaic wcs wms wmts daas ogcapi rasterlite mbtiles grib pdf webp openjpeg netcdf hdf5 hdf4 gif png pcraster jpeg  pcidsk postgisraster"
+usage()
+{
+	cat <<EOF
+Usage: gdal-config [OPTIONS]
+Options:
+	[--prefix[=DIR]]
+	[--libs]
+	[--dep-libs]
+	[--cflags]
+	[--datadir]
+	[--version]
+	[--ogr-enabled]
+	[--gnm-enabled]
+	[--formats]
+EOF
+	exit $1
+}
+
+if test $# -eq 0; then
+	usage 1 1>&2
+fi
+
+case $1 in
+  --libs)
+    echo $CONFIG_LIBS
+    ;;
+
+  --dep-libs)
+    echo $CONFIG_DEP_LIBS
+    ;;
+
+  --cflags)
+    echo $CONFIG_CFLAGS
+    ;;
+
+  --datadir)
+    echo $CONFIG_DATA
+    ;;
+
+  --prefix)
+    echo $CONFIG_PREFIX
+    ;;
+
+  --version)
+    echo $CONFIG_VERSION
+    ;;
+
+  --ogr-enabled)
+    echo yes
+    ;;
+
+  --gnm-enabled)
+    echo $CONFIG_GNM_ENABLED
+    ;;
+
+  --formats)
+    echo $CONFIG_FORMATS
+    ;;
+
+  *)
+    usage 1 1>&2
+    ;;
+
+esac

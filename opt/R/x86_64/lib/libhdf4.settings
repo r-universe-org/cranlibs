@@ -1,0 +1,38 @@
+	    SUMMARY OF THE HDF4 CONFIGURATION
+	    =================================
+
+General Information:
+-------------------
+		   HDF4 Version: 4.2.15
+		  Configured on: Wed Apr  5 18:35:29 EDT 2023
+		  Configured by: urbanek@ipyr
+		 Configure mode: production
+		    Host system: i386-apple-darwin22.4.0
+              Uname information: Darwin ipyr 22.4.0 Darwin Kernel Version 22.4.0: Mon Mar  6 21:00:17 PST 2023; root:xnu-8796.101.5~3/RELEASE_X86_64 x86_64
+		      Libraries: 
+	     Installation point: /opt/R/x86_64
+
+Compiling Options:
+------------------
+               Compilation Mode: production
+                     C compiler: /usr/bin/clang
+                         CFLAGS:  -Wno-implicit-function-declaration -O2
+                       CPPFLAGS: -I/opt/R/x86_64/include 
+               Shared Libraries: no
+               Static Libraries: yes
+  Statically Linked Executables: no
+                        LDFLAGS: -L/opt/R/x86_64/lib
+ 	 	Extra libraries: -ljpeg -lz -L/opt/R/x86_64/lib
+ 		       Archiver: ar
+ 		 	 Ranlib: ranlib
+
+Languages:
+----------
+                        Fortran: no
+
+                           Java: no
+
+Features:
+---------
+               SZIP compression: disabled
+   Support for netCDF API 2.3.2: no

@@ -1,0 +1,10 @@
+prefix=/opt/R/x86_64
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: libutf8proc
+Description: UTF8 processing
+Version: 2.5.0
+Libs: -L${libdir} -lutf8proc
+Cflags: -I${includedir} -DUTF8PROC_EXPORTS

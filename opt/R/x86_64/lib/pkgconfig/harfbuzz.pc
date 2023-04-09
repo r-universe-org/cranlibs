@@ -1,0 +1,13 @@
+prefix=/opt/R/x86_64
+exec_prefix=/opt/R/x86_64
+libdir=/opt/R/x86_64/lib
+includedir=/opt/R/x86_64/include
+
+Name: harfbuzz
+Description: HarfBuzz text shaping library
+Version: 7.1.0
+
+Libs: -L${libdir} -lharfbuzz
+Libs.private: -lm     
+Requires.private:  freetype2 >= 12.0.6 
+Cflags: -I${includedir}/harfbuzz

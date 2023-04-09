@@ -1,0 +1,9 @@
+Name: libpq
+Description: PostgreSQL libpq library
+Url: https://www.postgresql.org/
+Version: 14.5
+Requires: 
+Requires.private: 
+Cflags: -I/opt/R/x86_64/include
+Libs: -L/opt/R/x86_64/lib -lpq
+Libs.private: -L/opt/R/x86_64/lib -lpgcommon -lpgport -lm
