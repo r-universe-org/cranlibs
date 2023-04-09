@@ -1,0 +1,55 @@
+on:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: 'Tag a release'
+        type: boolean
+        required: false
+        default: false
+
+name: Download latest libs from CRAN
+
+jobs:
+  Build:
+    # OS matters because we copy 'cmake' and 'zstd' binaries from homebrew
+    runs-on: macos-11
+    steps:
+      - name: Prepare git
+        run: |
+          git config --global user.email '74155986+r-universe[bot]@users.noreply.github.com'
+          git config --global user.name  'r-universe[bot]'
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Download libraries
+        run: ./.github/workflows/download.sh
+
+      - name: Push binaries
+        run: |
+          rm -Rf opt
+          mkdir -p opt/R/x86_64/
+          mv out/opt/R/x86_64/{bin,lib,include,share} opt/R/x86_64/
+          git add opt files.log
+          git commit -m "Update at $(date +%F)" || exit 0
+          git push origin
+
+      - name: Create xz and zstd bundles
+        id: bundles
+        run: |
+          mkdir assets
+          tar cfJ assets/cranlibs.tar.xz opt
+          gtar -I 'zstd --ultra -22' -cf assets/cranlibs.tar.zst opt
+          echo "date=$(date +%F)" >> $GITHUB_OUTPUT
+
+#      - uses: actions/upload-artifact@v3
+#        with:
+#          name: cranlibs
+#          path: assets
+
+      - name: Release
+        if: ${{ github.event.inputs.release == 'true' }}
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.bundles.outputs.date }}
+          files: assets/*
