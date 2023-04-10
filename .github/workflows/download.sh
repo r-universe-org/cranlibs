@@ -46,6 +46,7 @@ mkdir share/
 gfind lib -type f -not \( -name '*.a' -or -name '*.pc' -or -name '*.settings' \) -delete
 
 # Copy stuff from homebrew
+# TODO: do we need this? Maybe CI should just use these tools from the runner?
 cp -v /usr/local/opt/cmake/bin/cmake ./bin/
 mkdir -p share/cmake/Templates
 cp -f /usr/local/opt/cmake/share/cmake/Templates/C* share/cmake/Templates/
