@@ -1,0 +1,12 @@
+prefix=/opt/R/x86_64
+libdir=/opt/R/x86_64/lib
+includedir=/opt/R/x86_64/include
+
+Name: poppler-cpp
+Description: cpp backend for Poppler PDF rendering library
+Version: 23.04.0
+Requires: 
+Requires.private: poppler = 23.04.0
+
+Libs: -L${libdir} -lpoppler-cpp
+Cflags: -I${includedir}/poppler/cpp

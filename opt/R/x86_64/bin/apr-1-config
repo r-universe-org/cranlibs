@@ -19,7 +19,7 @@
 # parameters.
 
 APR_MAJOR_VERSION="1"
-APR_DOTTED_VERSION="1.7.2"
+APR_DOTTED_VERSION="1.7.3"
 
 prefix="/opt/R/x86_64"
 exec_prefix="${prefix}"
@@ -39,8 +39,8 @@ LDFLAGS=""
 LIBS="-lpthread"
 EXTRA_INCLUDES=""
 SHLIBPATH_VAR="DYLD_LIBRARY_PATH"
-APR_SOURCE_DIR="/Volumes/Builds/recipes/build/src/apr-1.7.2"
-APR_BUILD_DIR="/Volumes/Builds/recipes/build/apr-1.7.2-obj"
+APR_SOURCE_DIR="/Volumes/Builds/recipes/build/src/apr-1.7.3"
+APR_BUILD_DIR="/Volumes/Builds/recipes/build/apr-1.7.3-obj"
 APR_SO_EXT="lo"
 APR_LIB_TARGET="-rpath \$(libdir) \$(OBJECTS)"
 APR_LIBNAME="apr-${APR_MAJOR_VERSION}"
@@ -48,13 +48,28 @@ APR_LIBNAME="apr-${APR_MAJOR_VERSION}"
 # NOTE: the following line is modified during 'make install': alter with care!
 location=installed
 
-# absolute path, but not installed path - we're cross compiling
-case "$0" in
-  "${bindir}/"*) ;;
-  "/"*)         location=crosscompile;
-                APR_TARGET_DIR=${0%${bindir}/apr-${APR_MAJOR_VERSION}-config} ;;
-  *)            ;;
-esac
+cross_compiling=no
+
+if test "$cross_compiling" != "no"; then
+
+    # Normalize $0 and bindir by removing consecutive '/' as the comparison
+    # and the suffix removal below might fail for semantic equal pathes.
+    # XXX: This is not perfect. On Linux we could use realpath for this purpose
+    # but realpath is not portable.
+    normalized_command=`echo $0 | tr -s /`
+    normalized_bindir=`echo ${bindir} | tr -s /`
+    # Remove trailing '/'
+    normalized_bindir=${normalized_bindir%/}
+
+    # absolute path, but not installed path - we're cross compiling
+    case "$normalized_command" in
+      "${normalized_bindir}/"*) ;;
+      "/"*)                     location=crosscompile;
+                                APR_TARGET_DIR=${normalized_command%${normalized_bindir}/apr-${APR_MAJOR_VERSION}-config};
+                                ;;
+      *)                        ;;
+    esac
+fi
 
 show_usage()
 {

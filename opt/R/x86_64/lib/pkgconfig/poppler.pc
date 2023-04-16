@@ -1,0 +1,11 @@
+prefix=/opt/R/x86_64
+libdir=/opt/R/x86_64/lib
+includedir=/opt/R/x86_64/include
+
+Name: poppler
+Description: PDF rendering library
+Version: 23.04.0
+Requires.private: libtiff-4, cairo
+
+Libs: -L${libdir} -lpoppler -lopenjp2
+Cflags: -I${includedir}/poppler

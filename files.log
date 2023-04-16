@@ -1,11 +1,11 @@
-https://mac.r-project.org/bin/darwin20/x86_64/apr-1.7.2-darwin.20-x86_64.tar.xz
+https://mac.r-project.org/bin/darwin20/x86_64/apr-1.7.3-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/apr-util-1.6.3-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/autoconf-2.71-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/automake-1.16.5-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/bdb-6.2.23-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/boost-1.80.0-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/bsdtar-3.6.0-darwin.20-x86_64.tar.xz
-https://mac.r-project.org/bin/darwin20/x86_64/cairo-1.16.0-darwin.20-x86_64.tar.xz
+https://mac.r-project.org/bin/darwin20/x86_64/cairo-1.17.6-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/cgl-0.60.6-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/clp-1.17.7-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/coinutils-2.11.6-darwin.20-x86_64.tar.xz
@@ -21,6 +21,7 @@ https://mac.r-project.org/bin/darwin20/x86_64/fribidi-1.0.12-darwin.20-x86_64.ta
 https://mac.r-project.org/bin/darwin20/x86_64/gdal-3.5.3-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/geos-3.11.0-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/gettext-0.21-darwin.20-x86_64.tar.xz
+https://mac.r-project.org/bin/darwin20/x86_64/glib-2.76.1-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/glpk-5.0-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/gmp-6.2.1-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/gsl-2.7.1-darwin.20-x86_64.tar.xz
@@ -42,10 +43,12 @@ https://mac.r-project.org/bin/darwin20/x86_64/nlopt-2.7.1-darwin.20-x86_64.tar.x
 https://mac.r-project.org/bin/darwin20/x86_64/openjpeg-2.5.0-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/openssl-1.1.1t-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/osi-0.108.7-darwin.20-x86_64.tar.xz
+https://mac.r-project.org/bin/darwin20/x86_64/pango-1.50.14-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/pcre-8.45-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/pcre2-10.42-darwin.20-x86_64.tar.xz
-https://mac.r-project.org/bin/darwin20/x86_64/pixman-0.40.0-darwin.20-x86_64.tar.xz
+https://mac.r-project.org/bin/darwin20/x86_64/pixman-0.42.2-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/pkgconfig-0.29.2-darwin.20-x86_64.tar.xz
+https://mac.r-project.org/bin/darwin20/x86_64/poppler-23.04.0-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/poppler-data-0.4.11-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/proj-9.1.0-darwin.20-x86_64.tar.xz
 https://mac.r-project.org/bin/darwin20/x86_64/protobuf-3.20.2-darwin.20-x86_64.tar.xz

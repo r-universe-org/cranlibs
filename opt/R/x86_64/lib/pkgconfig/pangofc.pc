@@ -1,0 +1,8 @@
+prefix=/opt/R/x86_64
+includedir=${prefix}/include
+
+Name: Pango FC
+Description: Fontconfig support for Pango
+Version: 1.50.14
+Requires: pangoft2
+Cflags: -I${includedir}/pango-1.0
