@@ -10,10 +10,10 @@ brew install cmake zstd gnu-tar findutils
 rm -Rf out files.log
 mkdir out
 mkdir packages
-packages=$(curl -sSL https://mac.r-project.org/bin/darwin20/x86_64/PACKAGES | perl -lne 'print $1 if /Binary: (.+)/')
+packages=$(curl -sSL https://mac.r-project.org/bin/darwin17/x86_64/PACKAGES | perl -lne 'print $1 if /Binary: (.+)/')
 while IFS= read -r pkg; do
 	echo "Downloading $pkg"
-	url="https://mac.r-project.org/bin/darwin20/x86_64/$pkg"
+	url="https://mac.r-project.org/bin/darwin17/x86_64/$pkg"
 	curl -sSL "$url" -o "packages/$pkg"
 	echo "$url" >> files.log
 done <<< "$packages"
@@ -26,7 +26,7 @@ for file in packages/*.tar.xz; do
 	echo "Extracting $file"
 	tar xf $file -C out
 done
-cd out/opt/R/x86_64
+cd out/usr/local
 for lib in lib/*.a; do
 	echo "Stripping $lib"
 	strip -S -D $lib

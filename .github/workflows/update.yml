@@ -27,29 +27,29 @@ jobs:
 
       - name: Push binaries
         run: |
-          rm -Rf opt
-          mkdir -p opt/R/x86_64/
-          mv out/opt/R/x86_64/{bin,lib,include,share} opt/R/x86_64/
-          git add opt files.log
+          rm -Rf usr
+          mkdir -p usr/local
+          mv out/usr/local/{bin,lib,include,share} usr/local/
+          git add usr files.log
           git commit -m "Update at $(date +%F)" || exit 0
-          git push origin
+#          git push origin
 
       - name: Create xz and zstd bundles
         id: bundles
         run: |
           mkdir assets
-          tar cfJ assets/cranlibs.tar.xz opt
-          gtar -I 'zstd --ultra -22' -cf assets/cranlibs.tar.zst opt
+          tar cfJ assets/cranlibs.tar.xz usr
+          gtar -I 'zstd --ultra -22' -cf assets/cranlibs.tar.zst usr
           echo "date=$(date +%F)" >> $GITHUB_OUTPUT
 
-#      - uses: actions/upload-artifact@v3
-#        with:
-#          name: cranlibs
-#          path: assets
+      - uses: actions/upload-artifact@v3
+        with:
+          name: cranlibs
+          path: assets
 
       - name: Release
         if: ${{ github.event.inputs.release == 'true' }}
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.bundles.outputs.date }}
+          tag_name: high-sierra
           files: assets/*
