@@ -43,7 +43,7 @@ mkdir share/
 (cd oldshare; mv -v gdal proj pkgconfig texinfo ../share/)
 
 # Only keep static libs and pc files
-gfind lib -type f -not \( -name '*.a' -or -name '*.pc' -or -name '*.settings' \) -delete
+gfind lib -type f -not \( -name '*.a' -or -name '*.pc' -or -name '*.settings' -or -name '*.h' \) -delete
 
 # Copy stuff from homebrew
 # TODO: do we need this? Maybe CI should just use these tools from the runner?
