@@ -4,7 +4,7 @@ set -e
 # Switch between intel and arm
 ARCH=$(uname -m)
 HOMEBREW=$(brew --prefix)
-
+DEST="${PWD}/opt/R/${ARCH}"
 #PATH=/opt/homebrew/bin:$PATH
 brew install cmake zstd gnu-tar findutils
 
@@ -12,9 +12,10 @@ brew install cmake zstd gnu-tar findutils
 #wget -r -np -nv -R "index.html*" https://mac.r-project.org/bin/darwin20/${ARCH}/
 
 # Download all the libs
-rm -Rf out files.log
+rm -Rf ${DEST} out files.log
 mkdir out
 mkdir packages
+mkdir -p ${DEST}
 packages=$(curl -sSL "https://mac.r-project.org/bin/darwin20/${ARCH}/PACKAGES" | perl -lne 'print $1 if /Binary: (.+)/')
 while IFS= read -r pkg; do
 	echo "Downloading $pkg"
@@ -59,3 +60,6 @@ cp -R ${HOMEBREW}/opt/cmake/share/cmake/Modules share/cmake/
 cp -v ${HOMEBREW}/opt/gnu-tar/bin/gtar ./bin/
 cp -v ${HOMEBREW}/opt/zstd/bin/{zstd,unzstd} ./bin/
 cp -v $(brew --repo)/Library/Homebrew/os/mac/pkgconfig/11/* ./lib/pkgconfig/
+
+# Copy to final location
+mv bin lib include share ${DEST}/

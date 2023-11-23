@@ -28,9 +28,6 @@ jobs:
       - name: Push binaries
         run: |
           arch=$(uname -m)
-          rm -Rf opt/R/${arch}/lib
-          mkdir -p opt/R/${arch}/
-          mv out/opt/R/${arch}/lib opt/R/${arch}/
           git add opt files.log
           git commit -m "Update at $(date +%F)" || exit 0
           git push origin
