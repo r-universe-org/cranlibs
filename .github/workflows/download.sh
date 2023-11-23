@@ -1,19 +1,24 @@
 #!/bin/sh
 set -e
+
+# Switch between intel and arm
+ARCH=$(uname -m)
+HOMEBREW=$(brew --prefix)
+
 #PATH=/opt/homebrew/bin:$PATH
 brew install cmake zstd gnu-tar findutils
 
 #This would fail once there are duplicate packages in the folder:
-#wget -r -np -nv -R "index.html*" https://mac.r-project.org/bin/darwin20/x86_64/
+#wget -r -np -nv -R "index.html*" https://mac.r-project.org/bin/darwin20/${ARCH}/
 
 # Download all the libs
 rm -Rf out files.log
 mkdir out
 mkdir packages
-packages=$(curl -sSL https://mac.r-project.org/bin/darwin20/x86_64/PACKAGES | perl -lne 'print $1 if /Binary: (.+)/')
+packages=$(curl -sSL "https://mac.r-project.org/bin/darwin20/${ARCH}/PACKAGES" | perl -lne 'print $1 if /Binary: (.+)/')
 while IFS= read -r pkg; do
 	echo "Downloading $pkg"
-	url="https://mac.r-project.org/bin/darwin20/x86_64/$pkg"
+	url="https://mac.r-project.org/bin/darwin20/${ARCH}/$pkg"
 	curl -sSL "$url" -o "packages/$pkg"
 	echo "$url" >> files.log
 done <<< "$packages"
@@ -26,7 +31,7 @@ for file in packages/*.tar.xz; do
 	echo "Extracting $file"
 	tar xf $file -C out
 done
-cd out/opt/R/x86_64
+cd out/opt/R/${ARCH}
 for lib in lib/*.a; do
 	echo "Stripping $lib"
 	strip -S -D $lib
@@ -47,10 +52,10 @@ gfind lib -type f -not \( -name '*.a' -or -name '*.pc' -or -name '*.settings' -o
 
 # Copy stuff from homebrew
 # TODO: do we need this? Maybe CI should just use these tools from the runner?
-cp -v /usr/local/opt/cmake/bin/cmake ./bin/
+cp -v ${HOMEBREW}/opt/cmake/bin/cmake ./bin/
 mkdir -p share/cmake/Templates
-cp -f /usr/local/opt/cmake/share/cmake/Templates/C* share/cmake/Templates/
-cp -R /usr/local/opt/cmake/share/cmake/Modules share/cmake/
-cp -v /usr/local/opt/gnu-tar/bin/gtar ./bin/
-cp -v /usr/local/opt/zstd/bin/{zstd,unzstd} ./bin/
+cp -f ${HOMEBREW}/opt/cmake/share/cmake/Templates/C* share/cmake/Templates/
+cp -R ${HOMEBREW}/opt/cmake/share/cmake/Modules share/cmake/
+cp -v ${HOMEBREW}/opt/gnu-tar/bin/gtar ./bin/
+cp -v ${HOMEBREW}/opt/zstd/bin/{zstd,unzstd} ./bin/
 cp -v $(brew --repo)/Library/Homebrew/os/mac/pkgconfig/11/* ./lib/pkgconfig/
