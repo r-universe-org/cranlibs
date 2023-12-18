@@ -47,6 +47,28 @@ if(CMAKE_HOST_UNIX)
       set(CMAKE_HOST_SYSTEM_VERSION "${_CMAKE_HOST_SYSTEM_MAJOR_VERSION}.${_CMAKE_HOST_SYSTEM_MINOR_VERSION}")
       unset(_CMAKE_HOST_SYSTEM_MAJOR_VERSION)
       unset(_CMAKE_HOST_SYSTEM_MINOR_VERSION)
+    elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Android")
+      execute_process(COMMAND getprop ro.build.version.sdk
+        OUTPUT_VARIABLE CMAKE_HOST_SYSTEM_VERSION
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET)
+
+      if(NOT DEFINED CMAKE_SYSTEM_VERSION)
+        set(_ANDROID_API_LEVEL_H $ENV{PREFIX}/include/android/api-level.h)
+        set(_ANDROID_API_REGEX "#define __ANDROID_API__ ([0-9]+)")
+        file(READ ${_ANDROID_API_LEVEL_H} _ANDROID_API_LEVEL_H_CONTENT)
+        string(REGEX MATCH ${_ANDROID_API_REGEX} _ANDROID_API_LINE "${_ANDROID_API_LEVEL_H_CONTENT}")
+        string(REGEX REPLACE ${_ANDROID_API_REGEX} "\\1" _ANDROID_API "${_ANDROID_API_LINE}")
+        if(_ANDROID_API)
+          set(CMAKE_SYSTEM_VERSION "${_ANDROID_API}")
+        endif()
+
+        unset(_ANDROID_API_LEVEL_H)
+        unset(_ANDROID_API_LEVEL_H_CONTENT)
+        unset(_ANDROID_API_REGEX)
+        unset(_ANDROID_API_LINE)
+        unset(_ANDROID_API)
+      endif()
     else()
       execute_process(COMMAND ${CMAKE_UNAME} -r
         OUTPUT_VARIABLE CMAKE_HOST_SYSTEM_VERSION
@@ -176,6 +198,13 @@ else()
     set(CMAKE_SYSTEM_VERSION "${CMAKE_HOST_SYSTEM_VERSION}")
   endif()
   set(CMAKE_SYSTEM_PROCESSOR "${CMAKE_HOST_SYSTEM_PROCESSOR}")
+  if(CMAKE_CROSSCOMPILING)
+    message(AUTHOR_WARNING
+      "CMAKE_CROSSCOMPILING has been set by the project, toolchain file, or user.  "
+      "CMake is resetting it to false because CMAKE_SYSTEM_NAME was not set.  "
+      "To indicate cross compilation, only CMAKE_SYSTEM_NAME needs to be set."
+      )
+  endif()
   set(CMAKE_CROSSCOMPILING FALSE)
   set(PRESET_CMAKE_SYSTEM_NAME FALSE)
 endif()

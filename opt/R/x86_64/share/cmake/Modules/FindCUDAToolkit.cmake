@@ -29,8 +29,8 @@ The CUDA Toolkit search behavior uses the following order:
    precedence.
 
    The directory specified here must be such that the executable ``nvcc`` or
-   the appropriate ``version.txt`` file can be found underneath the specified
-   directory.
+   the appropriate ``version.txt`` or ``version.json`` file can be found
+   underneath the specified directory.
 
 3. If the CUDA_PATH environment variable is defined, it will be searched
    for ``nvcc``.
@@ -109,6 +109,7 @@ of the following libraries that are part of the CUDAToolkit:
 - :ref:`CUDA Runtime Library<cuda_toolkit_rt_lib>`
 - :ref:`CUDA Driver Library<cuda_toolkit_driver_lib>`
 - :ref:`cuBLAS<cuda_toolkit_cuBLAS>`
+- :ref:`cuDLA<cuda_toolkit_cuDLA>`
 - :ref:`cuFile<cuda_toolkit_cuFile>`
 - :ref:`cuFFT<cuda_toolkit_cuFFT>`
 - :ref:`cuRAND<cuda_toolkit_cuRAND>`
@@ -166,6 +167,19 @@ Targets Created:
 - ``CUDA::cublasLt`` starting in CUDA 10.1
 - ``CUDA::cublasLt_static`` starting in CUDA 10.1
 
+.. _`cuda_toolkit_cuDLA`:
+
+cuDLA
+""""""
+
+.. versionadded:: 3.27
+
+The NVIDIA Tegra Deep Learning Accelerator `cuDLA <https://docs.nvidia.com/cuda/cublas/index.html>`_ library.
+
+Targets Created:
+
+- ``CUDA::cudla`` starting in CUDA 11.6
+
 .. _`cuda_toolkit_cuFile`:
 
 cuFile
@@ -173,7 +187,7 @@ cuFile
 
 .. versionadded:: 3.25
 
-The NVIDIA GPUDirect Storage `cuFile <https://docs.nvidia.com/cuda/cufile-api/index.html>`_ library.
+The NVIDIA GPUDirect Storage `cuFile <https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html>`_ library.
 
 Targets Created:
 
@@ -236,12 +250,19 @@ Targets Created:
 cupti
 """""
 
-The `NVIDIA CUDA Profiling Tools Interface <https://developer.nvidia.com/CUPTI>`_.
+The `NVIDIA CUDA Profiling Tools Interface <https://developer.nvidia.com/cupti>`_.
 
 Targets Created:
 
 - ``CUDA::cupti``
 - ``CUDA::cupti_static``
+
+.. versionadded:: 3.27
+
+  - ``CUDA::nvperf_host``         starting in CUDA 10.2
+  - ``CUDA::nvperf_host_static``  starting in CUDA 10.2
+  - ``CUDA::nvperf_target``       starting in CUDA 10.2
+  - ``CUDA::pcsamplingutil``      starting in CUDA 11.3
 
 .. _`cuda_toolkit_NPP`:
 
@@ -330,7 +351,7 @@ Targets Created:
 nvGRAPH
 """""""
 
-The `nvGRAPH <https://docs.nvidia.com/cuda/nvgraph/index.html>`_ library.
+The `nvGRAPH <https://web.archive.org/web/20201111171403/https://docs.nvidia.com/cuda/nvgraph/index.html>`_ library.
 Removed starting in CUDA 11.0
 
 Targets Created:
@@ -374,7 +395,6 @@ nvRTC
 """""
 
 The `nvRTC <https://docs.nvidia.com/cuda/nvrtc/index.html>`_ (Runtime Compilation) library.
-This is a shared library only.
 
 Targets Created:
 
@@ -417,7 +437,7 @@ nvToolsExt
 
 .. deprecated:: 3.25 With CUDA 10.0+, use :ref:`nvtx3 <cuda_toolkit_nvtx3>`.
 
-The `NVIDIA Tools Extension <https://docs.nvidia.com/gameworks/content/gameworkslibrary/nvtx/nvidia_tools_extension_library_nvtx.htm>`_.
+The `NVIDIA Tools Extension <https://docs.nvidia.com/nvtx/>`_.
 This is a shared library only.
 
 Targets Created:
@@ -478,7 +498,7 @@ Result variables
 
 ``CUDAToolkit_VERSION``
     The exact version of the CUDA Toolkit found (as reported by
-    ``nvcc --version`` or ``version.txt``).
+    ``nvcc --version``, ``version.txt``, or ``version.json``).
 
 ``CUDAToolkit_VERSION_MAJOR``
     The major version of the CUDA Toolkit.
@@ -494,7 +514,7 @@ Result variables
     executable ``nvcc``.
 
 ``CUDAToolkit_INCLUDE_DIRS``
-    The path to the CUDA Toolkit ``include`` folder containing the header files
+    List of paths to all the CUDA Toolkit folders containing header files
     required to compile a project linking against CUDA.
 
 ``CUDAToolkit_LIBRARY_DIR``
@@ -505,7 +525,7 @@ Result variables
     .. versionadded:: 3.18
 
     The path to the CUDA Toolkit directory containing the nvvm directory and
-    version.txt.
+    either version.txt or version.json.
 
 ``CUDAToolkit_TARGET_DIR``
     The path to the CUDA Toolkit directory including the target architecture
@@ -559,13 +579,28 @@ Result variables
 #
 ###############################################################################
 
+function(_CUDAToolkit_build_include_dirs result_variable default_paths_variable)
+  set(content "${${default_paths_variable}}")
+  set(${result_variable} "${content}" PARENT_SCOPE)
+endfunction()
+
+function(_CUDAToolkit_build_library_dirs result_variable default_paths_variable)
+  set(content "${${default_paths_variable}}")
+  set(${result_variable} "${content}" PARENT_SCOPE)
+endfunction()
+
 # The toolkit is located during compiler detection for CUDA and stored in CMakeCUDACompiler.cmake as
-# CMAKE_CUDA_COMPILER_TOOLKIT_ROOT and CMAKE_CUDA_COMPILER_LIBRARY_ROOT.
+# - CMAKE_CUDA_COMPILER_TOOLKIT_ROOT
+# - CMAKE_CUDA_COMPILER_LIBRARY_ROOT
+# - CMAKE_CUDA_COMPILER_LIBRARY_DIRECTORIES_FROM_IMPLICIT_LIBRARIES
+# - CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES
 # We compute the rest based on those here to avoid re-searching and to avoid finding a possibly
 # different installation.
 if(CMAKE_CUDA_COMPILER_TOOLKIT_ROOT)
   set(CUDAToolkit_ROOT_DIR "${CMAKE_CUDA_COMPILER_TOOLKIT_ROOT}")
   set(CUDAToolkit_LIBRARY_ROOT "${CMAKE_CUDA_COMPILER_LIBRARY_ROOT}")
+  _CUDAToolkit_build_library_dirs(CUDAToolkit_IMPLICIT_LIBRARY_DIRECTORIES CMAKE_CUDA_HOST_IMPLICIT_LINK_DIRECTORIES)
+  _CUDAToolkit_build_include_dirs(CUDAToolkit_INCLUDE_DIRECTORIES CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES)
   set(CUDAToolkit_BIN_DIR "${CUDAToolkit_ROOT_DIR}/bin")
   set(CUDAToolkit_NVCC_EXECUTABLE "${CUDAToolkit_BIN_DIR}/nvcc${CMAKE_EXECUTABLE_SUFFIX}")
   set(CUDAToolkit_VERSION "${CMAKE_CUDA_COMPILER_TOOLKIT_VERSION}")
@@ -590,7 +625,7 @@ else()
 
       if(NOT CUDAToolkit_NVCC_EXECUTABLE)
         find_file(CUDAToolkit_SENTINEL_FILE
-          NAMES version.txt
+          NAMES version.txt version.json
           PATHS ${arg_SEARCH_PATHS}
           NO_DEFAULT_PATH
         )
@@ -602,15 +637,49 @@ else()
         # NVIDIA HPC SDK, and distro's splayed layouts
         execute_process(COMMAND ${CUDAToolkit_NVCC_EXECUTABLE} "-v" "__cmake_determine_cuda"
           OUTPUT_VARIABLE _CUDA_NVCC_OUT ERROR_VARIABLE _CUDA_NVCC_OUT)
+        message(CONFIGURE_LOG
+          "Executed nvcc to extract CUDAToolkit information:\n${_CUDA_NVCC_OUT}\n\n")
         if(_CUDA_NVCC_OUT MATCHES "\\#\\$ TOP=([^\r\n]*)")
           get_filename_component(CUDAToolkit_BIN_DIR "${CMAKE_MATCH_1}/bin" ABSOLUTE)
+          message(CONFIGURE_LOG
+            "Parsed CUDAToolkit nvcc location:\n${CUDAToolkit_BIN_DIR}\n\n")
         else()
           get_filename_component(CUDAToolkit_BIN_DIR "${CUDAToolkit_NVCC_EXECUTABLE}" DIRECTORY)
         endif()
+        if(_CUDA_NVCC_OUT MATCHES "\\#\\$ INCLUDES=([^\r\n]*)")
+          separate_arguments(_nvcc_output NATIVE_COMMAND "${CMAKE_MATCH_1}")
+          foreach(line IN LISTS _nvcc_output)
+            string(REGEX REPLACE "^-I" "" line "${line}")
+            get_filename_component(line "${line}" ABSOLUTE)
+            list(APPEND _cmake_CUDAToolkit_include_directories "${line}")
+          endforeach()
+          message(CONFIGURE_LOG
+            "Parsed CUDAToolkit nvcc implicit include information:\n${_cmake_CUDAToolkit_include_directories}\n\n")
+
+          set(_cmake_CUDAToolkit_include_directories "${_cmake_CUDAToolkit_include_directories}" CACHE INTERNAL "CUDAToolkit internal list of include directories")
+        endif()
+        if(_CUDA_NVCC_OUT MATCHES "\\#\\$ LIBRARIES=([^\r\n]*)")
+          include(${CMAKE_ROOT}/Modules/CMakeParseImplicitLinkInfo.cmake)
+          set(_nvcc_link_line "cuda-fake-ld ${CMAKE_MATCH_1}")
+          CMAKE_PARSE_IMPLICIT_LINK_INFO("${_nvcc_link_line}"
+                                   _cmake_CUDAToolkit_implicit_link_libs
+                                   _cmake_CUDAToolkit_implicit_link_directories
+                                   _cmake_CUDAToolkit_implicit_frameworks
+                                   _nvcc_log
+                                   "${CMAKE_CUDA_IMPLICIT_OBJECT_REGEX}"
+                                   LANGUAGE CUDA)
+          message(CONFIGURE_LOG
+          "Parsed CUDAToolkit nvcc implicit link information:\n${_nvcc_log}\n${_cmake_CUDAToolkit_implicit_link_directories}\n\n")
+          unset(_nvcc_link_line)
+          unset(_cmake_CUDAToolkit_implicit_link_libs)
+          unset(_cmake_CUDAToolkit_implicit_frameworks)
+
+          set(_cmake_CUDAToolkit_implicit_link_directories "${_cmake_CUDAToolkit_implicit_link_directories}" CACHE INTERNAL "CUDAToolkit internal list of implicit link directories")
+        endif()
         unset(_CUDA_NVCC_OUT)
 
-        mark_as_advanced(CUDAToolkit_BIN_DIR)
         set(CUDAToolkit_BIN_DIR "${CUDAToolkit_BIN_DIR}" CACHE PATH "" FORCE)
+        mark_as_advanced(CUDAToolkit_BIN_DIR)
       endif()
 
       if(CUDAToolkit_SENTINEL_FILE)
@@ -622,6 +691,15 @@ else()
       endif()
     endif()
 
+    if(DEFINED _cmake_CUDAToolkit_include_directories)
+      _CUDAToolkit_build_include_dirs(_cmake_CUDAToolkit_contents _cmake_CUDAToolkit_include_directories)
+      set(CUDAToolkit_INCLUDE_DIRECTORIES "${_cmake_CUDAToolkit_contents}" PARENT_SCOPE)
+    endif()
+    if(DEFINED _cmake_CUDAToolkit_implicit_link_directories)
+      _CUDAToolkit_build_library_dirs(_cmake_CUDAToolkit_contents _cmake_CUDAToolkit_implicit_link_directories)
+      set(CUDAToolkit_IMPLICIT_LIBRARY_DIRECTORIES "${_cmake_CUDAToolkit_contents}" PARENT_SCOPE)
+    endif()
+
     if(CUDAToolkit_BIN_DIR)
       get_filename_component(CUDAToolkit_ROOT_DIR ${CUDAToolkit_BIN_DIR} DIRECTORY ABSOLUTE)
       set(CUDAToolkit_ROOT_DIR "${CUDAToolkit_ROOT_DIR}" PARENT_SCOPE)
@@ -631,14 +709,43 @@ else()
 
   function(_CUDAToolkit_find_version_file result_variable)
     # We first check for a non-scattered installation to prefer it over a scattered installation.
-    if(CUDAToolkit_ROOT AND EXISTS "${CUDAToolkit_ROOT}/version.txt")
-      set(${result_variable} "${CUDAToolkit_ROOT}/version.txt" PARENT_SCOPE)
-    elseif(CUDAToolkit_ROOT_DIR AND EXISTS "${CUDAToolkit_ROOT_DIR}/version.txt")
-      set(${result_variable} "${CUDAToolkit_ROOT_DIR}/version.txt" PARENT_SCOPE)
-    elseif(CMAKE_SYSROOT_LINK AND EXISTS "${CMAKE_SYSROOT_LINK}/usr/lib/cuda/version.txt")
-      set(${result_variable} "${CMAKE_SYSROOT_LINK}/usr/lib/cuda/version.txt" PARENT_SCOPE)
-    elseif(EXISTS "${CMAKE_SYSROOT}/usr/lib/cuda/version.txt")
-      set(${result_variable} "${CMAKE_SYSROOT}/usr/lib/cuda/version.txt" PARENT_SCOPE)
+    set(version_files version.txt version.json)
+    foreach(vf IN LISTS version_files)
+      if(CUDAToolkit_ROOT AND EXISTS "${CUDAToolkit_ROOT}/${vf}")
+        set(${result_variable} "${CUDAToolkit_ROOT}/${vf}" PARENT_SCOPE)
+        break()
+      elseif(CUDAToolkit_ROOT_DIR AND EXISTS "${CUDAToolkit_ROOT_DIR}/${vf}")
+        set(${result_variable} "${CUDAToolkit_ROOT_DIR}/${vf}" PARENT_SCOPE)
+        break()
+      elseif(CMAKE_SYSROOT_LINK AND EXISTS "${CMAKE_SYSROOT_LINK}/usr/lib/cuda/${vf}")
+        set(${result_variable} "${CMAKE_SYSROOT_LINK}/usr/lib/cuda/${vf}" PARENT_SCOPE)
+        break()
+      elseif(EXISTS "${CMAKE_SYSROOT}/usr/lib/cuda/${vf}")
+        set(${result_variable} "${CMAKE_SYSROOT}/usr/lib/cuda/${vf}" PARENT_SCOPE)
+        break()
+      endif()
+    endforeach()
+  endfunction()
+
+  function(_CUDAToolkit_parse_version_file version_file)
+    if(version_file)
+      file(READ "${version_file}" file_conents)
+      cmake_path(GET version_file EXTENSION LAST_ONLY version_ext)
+      if(version_ext STREQUAL ".json")
+        string(JSON cuda_version_info GET "${file_conents}" "cuda" "version")
+        set(cuda_version_match_regex [=[([0-9]+)\.([0-9]+)\.([0-9]+)]=])
+      elseif(version_ext STREQUAL ".txt")
+        set(cuda_version_info "${file_conents}")
+        set(cuda_version_match_regex [=[CUDA Version ([0-9]+)\.([0-9]+)\.([0-9]+)]=])
+      endif()
+
+      if(cuda_version_info MATCHES "${cuda_version_match_regex}")
+        set(CUDAToolkit_VERSION_MAJOR "${CMAKE_MATCH_1}" PARENT_SCOPE)
+        set(CUDAToolkit_VERSION_MINOR "${CMAKE_MATCH_2}" PARENT_SCOPE)
+        set(CUDAToolkit_VERSION_PATCH "${CMAKE_MATCH_3}" PARENT_SCOPE)
+        set(CUDAToolkit_VERSION "${CMAKE_MATCH_1}.${CMAKE_MATCH_2}.${CMAKE_MATCH_3}" PARENT_SCOPE)
+        message(STATUS "_CUDAToolkit_parse_version_file")
+      endif()
     endif()
   endfunction()
 
@@ -785,15 +892,7 @@ else()
     unset(NVCC_OUT)
   else()
     _CUDAToolkit_find_version_file(version_file)
-    if(version_file)
-      file(READ "${version_file}" VERSION_INFO)
-      if(VERSION_INFO MATCHES [=[CUDA Version ([0-9]+)\.([0-9]+)\.([0-9]+)]=])
-        set(CUDAToolkit_VERSION_MAJOR "${CMAKE_MATCH_1}")
-        set(CUDAToolkit_VERSION_MINOR "${CMAKE_MATCH_2}")
-        set(CUDAToolkit_VERSION_PATCH "${CMAKE_MATCH_3}")
-        set(CUDAToolkit_VERSION "${CMAKE_MATCH_1}.${CMAKE_MATCH_2}.${CMAKE_MATCH_3}")
-      endif()
-    endif()
+    _CUDAToolkit_parse_version_file("${version_file}")
   endif()
 endif()
 
@@ -844,18 +943,27 @@ if(NOT CUDAToolkit_TARGET_DIR)
   set(_CUDAToolkit_Pop_Prefix True)
 endif()
 
-# CUDAToolkit_TARGET_DIR always points to the directory containing the include directory.
-# On a scattered installation /usr, on a non-scattered something like /usr/local/cuda or /usr/local/cuda-10.2/targets/aarch64-linux.
-if(EXISTS "${CUDAToolkit_TARGET_DIR}/include/cuda_runtime.h")
-  set(CUDAToolkit_INCLUDE_DIR "${CUDAToolkit_TARGET_DIR}/include")
-elseif(NOT CUDAToolkit_FIND_QUIETLY)
-  message(STATUS "Unable to find cuda_runtime.h in \"${CUDAToolkit_TARGET_DIR}/include\" for CUDAToolkit_INCLUDE_DIR.")
+
+# We don't need to verify the cuda_runtime header when we are using `nvcc` include paths
+# as the compiler being enabled means the header was found
+if(NOT CUDAToolkit_INCLUDE_DIRECTORIES)
+  # Otherwise use CUDAToolkit_TARGET_DIR to guess where the `cuda_runtime.h` is located
+  # On a scattered installation /usr, on a non-scattered something like /usr/local/cuda or /usr/local/cuda-10.2/targets/aarch64-linux.
+  if(EXISTS "${CUDAToolkit_TARGET_DIR}/include/cuda_runtime.h")
+    set(CUDAToolkit_INCLUDE_DIRECTORIES "${CUDAToolkit_TARGET_DIR}/include")
+  else()
+    message(STATUS "Unable to find cuda_runtime.h in \"${CUDAToolkit_TARGET_DIR}/include\" for CUDAToolkit_INCLUDE_DIRECTORIES.")
+  endif()
 endif()
 
 # The NVHPC layout moves math library headers and libraries to a sibling directory and it could be nested under
 # the version of the CUDA toolchain
 # Create a separate variable so this directory can be selectively added to math targets.
-if(NOT EXISTS "${CUDAToolkit_INCLUDE_DIR}/cublas_v2.h")
+find_path(CUDAToolkit_CUBLAS_INCLUDE_DIR cublas_v2.h PATHS
+  "${CUDAToolkit_INCLUDE_DIRECTORIES}"
+  NO_DEFAULT_PATH)
+
+if(NOT CUDAToolkit_CUBLAS_INCLUDE_DIR)
   file(REAL_PATH "${CUDAToolkit_TARGET_DIR}" CUDAToolkit_MATH_INCLUDE_DIR)
   cmake_path(APPEND CUDAToolkit_MATH_INCLUDE_DIR "../../math_libs/")
   if(EXISTS "${CUDAToolkit_MATH_INCLUDE_DIR}/${CUDAToolkit_VERSION_MAJOR}.${CUDAToolkit_VERSION_MINOR}/")
@@ -864,22 +972,26 @@ if(NOT EXISTS "${CUDAToolkit_INCLUDE_DIR}/cublas_v2.h")
   cmake_path(APPEND CUDAToolkit_MATH_INCLUDE_DIR "include")
   cmake_path(NORMAL_PATH CUDAToolkit_MATH_INCLUDE_DIR)
 
-  if(NOT EXISTS "${CUDAToolkit_MATH_INCLUDE_DIR}/cublas_v2.h")
-    if(NOT CUDAToolkit_FIND_QUIETLY)
-      message(STATUS "Unable to find cublas_v2.h in either \"${CUDAToolkit_INCLUDE_DIR}\" or \"${CUDAToolkit_MATH_INCLUDE_DIR}\"")
-    endif()
-    unset(CUDAToolkit_MATH_INCLUDE_DIR)
+  find_path(CUDAToolkit_CUBLAS_INCLUDE_DIR cublas_v2.h PATHS
+    "${CUDAToolkit_INCLUDE_DIRECTORIES}"
+    )
+  if(CUDAToolkit_CUBLAS_INCLUDE_DIR)
+    list(APPEND CUDAToolkit_INCLUDE_DIRECTORIES "${CUDAToolkit_CUBLAS_INCLUDE_DIR}")
   endif()
 endif()
+unset(CUDAToolkit_CUBLAS_INCLUDE_DIR CACHE)
+unset(CUDAToolkit_CUBLAS_INCLUDE_DIR)
 
 # Find the CUDA Runtime Library libcudart
 find_library(CUDA_CUDART
   NAMES cudart
+  PATHS ${CUDAToolkit_IMPLICIT_LIBRARY_DIRECTORIES}
   PATH_SUFFIXES lib64 lib/x64
 )
 find_library(CUDA_CUDART
   NAMES cudart
-  PATH_SUFFIXES lib64/stubs lib/x64/stubs
+  PATHS ${CUDAToolkit_IMPLICIT_LIBRARY_DIRECTORIES}
+  PATH_SUFFIXES lib64/stubs lib/x64/stubs lib/stubs stubs
 )
 
 if(NOT CUDA_CUDART AND NOT CUDAToolkit_FIND_QUIETLY)
@@ -896,7 +1008,7 @@ endif()
 include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
 find_package_handle_standard_args(CUDAToolkit
   REQUIRED_VARS
-    CUDAToolkit_INCLUDE_DIR
+    CUDAToolkit_INCLUDE_DIRECTORIES
     CUDA_CUDART
     CUDAToolkit_BIN_DIR
   VERSION_VAR
@@ -905,7 +1017,6 @@ find_package_handle_standard_args(CUDAToolkit
 
 unset(CUDAToolkit_ROOT_DIR)
 mark_as_advanced(CUDA_CUDART
-                 CUDAToolkit_INCLUDE_DIR
                  CUDAToolkit_NVCC_EXECUTABLE
                  CUDAToolkit_SENTINEL_FILE
                  )
@@ -913,7 +1024,7 @@ mark_as_advanced(CUDA_CUDART
 #-----------------------------------------------------------------------------
 # Construct result variables
 if(CUDAToolkit_FOUND)
-  set(CUDAToolkit_INCLUDE_DIRS ${CUDAToolkit_INCLUDE_DIR})
+  set(CUDAToolkit_INCLUDE_DIRS "${CUDAToolkit_INCLUDE_DIRECTORIES}")
   get_filename_component(CUDAToolkit_LIBRARY_DIR ${CUDA_CUDART} DIRECTORY ABSOLUTE)
 
   # Build search paths without any symlinks
@@ -924,15 +1035,36 @@ if(CUDAToolkit_FOUND)
   # search paths without symlinks
   if(CUDAToolkit_LIBRARY_DIR  MATCHES ".*/cuda/${CUDAToolkit_VERSION_MAJOR}.${CUDAToolkit_VERSION_MINOR}/lib64$")
     # Search location for math_libs/
-    file(REAL_PATH "${CUDAToolkit_LIBRARY_DIR}/../../../" _cmake_search_dir)
-    list(APPEND CUDAToolkit_LIBRARY_SEARCH_DIRS "${_cmake_search_dir}")
+    block(SCOPE_FOR POLICIES)
+      cmake_policy(SET CMP0152 NEW)
+      file(REAL_PATH "${CUDAToolkit_LIBRARY_DIR}/../../../../../" _cmake_search_dir)
+      list(APPEND CUDAToolkit_LIBRARY_SEARCH_DIRS "${_cmake_search_dir}")
 
-    # Search location for extras like cupti
-    file(REAL_PATH "${CUDAToolkit_LIBRARY_DIR}/../" _cmake_search_dir)
-    list(APPEND CUDAToolkit_LIBRARY_SEARCH_DIRS "${_cmake_search_dir}")
+      # Search location for extras like cupti
+      file(REAL_PATH "${CUDAToolkit_LIBRARY_DIR}/../../../" _cmake_search_dir)
+      list(APPEND CUDAToolkit_LIBRARY_SEARCH_DIRS "${_cmake_search_dir}")
+    endblock()
+  endif()
+
+  if(DEFINED CUDAToolkit_IMPLICIT_LIBRARY_DIRECTORIES)
+    list(APPEND CUDAToolkit_LIBRARY_SEARCH_DIRS "${CUDAToolkit_IMPLICIT_LIBRARY_DIRECTORIES}")
+  endif()
+
+  # If no `CUDAToolkit_LIBRARY_ROOT` exists set it based on CUDAToolkit_LIBRARY_DIR
+  if(NOT DEFINED CUDAToolkit_LIBRARY_ROOT)
+    foreach(CUDAToolkit_search_loc IN LISTS CUDAToolkit_LIBRARY_DIR CUDAToolkit_BIN_DIR)
+      get_filename_component(CUDAToolkit_possible_lib_root "${CUDAToolkit_search_loc}" DIRECTORY ABSOLUTE)
+      if(EXISTS "${CUDAToolkit_possible_lib_root}/nvvm/")
+        set(CUDAToolkit_LIBRARY_ROOT "${CUDAToolkit_possible_lib_root}")
+        break()
+      endif()
+    endforeach()
+    unset(CUDAToolkit_search_loc)
+    unset(CUDAToolkit_possible_lib_root)
   endif()
 endif()
-
+unset(CUDAToolkit_IMPLICIT_LIBRARY_DIRECTORIES)
+unset(CUDAToolkit_INCLUDE_DIRECTORIES)
 
 #-----------------------------------------------------------------------------
 # Construct import targets
@@ -955,17 +1087,28 @@ if(CUDAToolkit_FOUND)
     )
     # Don't try any stub directories until we have exhausted all other
     # search locations.
-    find_library(CUDA_${lib_name}_LIBRARY
-      NAMES ${search_names}
-      HINTS ${CUDAToolkit_LIBRARY_SEARCH_DIRS}
-            ENV CUDA_PATH
-      PATH_SUFFIXES lib64/stubs lib/x64/stubs lib/stubs stubs
-    )
+    set(CUDA_IMPORT_PROPERTY IMPORTED_LOCATION)
+    set(CUDA_IMPORT_TYPE     UNKNOWN)
+    if(NOT CUDA_${lib_name}_LIBRARY)
+      find_library(CUDA_${lib_name}_LIBRARY
+        NAMES ${search_names}
+        HINTS ${CUDAToolkit_LIBRARY_SEARCH_DIRS}
+              ENV CUDA_PATH
+        PATH_SUFFIXES lib64/stubs lib/x64/stubs lib/stubs stubs
+      )
+    endif()
+    if(CUDA_${lib_name}_LIBRARY MATCHES "/stubs/" AND NOT WIN32)
+      # Use a SHARED library with IMPORTED_IMPLIB, but not IMPORTED_LOCATION,
+      # to indicate that the stub is for linkers but not dynamic loaders.
+      # It will not contribute any RPATH entry.
+      set(CUDA_IMPORT_PROPERTY IMPORTED_IMPLIB)
+      set(CUDA_IMPORT_TYPE     SHARED)
+    endif()
 
     mark_as_advanced(CUDA_${lib_name}_LIBRARY)
 
     if (NOT TARGET CUDA::${lib_name} AND CUDA_${lib_name}_LIBRARY)
-      add_library(CUDA::${lib_name} UNKNOWN IMPORTED)
+      add_library(CUDA::${lib_name} ${CUDA_IMPORT_TYPE} IMPORTED)
       target_include_directories(CUDA::${lib_name} SYSTEM INTERFACE "${CUDAToolkit_INCLUDE_DIRS}")
       if(DEFINED CUDAToolkit_MATH_INCLUDE_DIR)
         string(FIND ${CUDA_${lib_name}_LIBRARY} "math_libs" math_libs)
@@ -973,7 +1116,7 @@ if(CUDAToolkit_FOUND)
           target_include_directories(CUDA::${lib_name} SYSTEM INTERFACE "${CUDAToolkit_MATH_INCLUDE_DIR}")
         endif()
       endif()
-      set_property(TARGET CUDA::${lib_name} PROPERTY IMPORTED_LOCATION "${CUDA_${lib_name}_LIBRARY}")
+      set_property(TARGET CUDA::${lib_name} PROPERTY ${CUDA_IMPORT_PROPERTY} "${CUDA_${lib_name}_LIBRARY}")
       foreach(dep ${arg_DEPS})
         if(TARGET CUDA::${dep})
           target_link_libraries(CUDA::${lib_name} INTERFACE CUDA::${dep})
@@ -1022,11 +1165,23 @@ if(CUDAToolkit_FOUND)
     endif()
   endif()
 
+  if(CUDAToolkit_VERSION VERSION_GREATER_EQUAL 12.0.0)
+    _CUDAToolkit_find_and_add_import_lib(nvJitLink)
+    _CUDAToolkit_find_and_add_import_lib(nvJitLink_static DEPS cudart_static_deps)
+  endif()
+
   _CUDAToolkit_find_and_add_import_lib(culibos) # it's a static library
-  foreach (cuda_lib cublasLt cufft curand cusparse nppc nvjpeg)
+  foreach (cuda_lib cublasLt cufft nvjpeg)
+    _CUDAToolkit_find_and_add_import_lib(${cuda_lib})
+    _CUDAToolkit_find_and_add_import_lib(${cuda_lib}_static DEPS cudart_static_deps culibos)
+  endforeach()
+  foreach (cuda_lib curand nppc)
     _CUDAToolkit_find_and_add_import_lib(${cuda_lib})
     _CUDAToolkit_find_and_add_import_lib(${cuda_lib}_static DEPS culibos)
   endforeach()
+
+  _CUDAToolkit_find_and_add_import_lib(cusparse DEPS nvJitLink)
+  _CUDAToolkit_find_and_add_import_lib(cusparse_static DEPS nvJitLink_static culibos)
 
   if(CUDAToolkit_VERSION VERSION_GREATER_EQUAL 11.0.0)
     # cublas depends on cublasLt
@@ -1039,12 +1194,17 @@ if(CUDAToolkit_FOUND)
   endif()
 
   if(CUDAToolkit_VERSION VERSION_GREATER_EQUAL 11.4)
-    _CUDAToolkit_find_and_add_import_lib(cuFile DEPS culibos)
-    _CUDAToolkit_find_and_add_import_lib(cuFile_static DEPS culibos)
+    _CUDAToolkit_find_and_add_import_lib(cuFile ALT cufile DEPS culibos)
+    _CUDAToolkit_find_and_add_import_lib(cuFile_static ALT cufile_static DEPS culibos)
 
-    _CUDAToolkit_find_and_add_import_lib(cuFile_rdma DEPS cuFile culibos)
-    _CUDAToolkit_find_and_add_import_lib(cuFile_rdma_static DEPS cuFile_static culibos)
+    _CUDAToolkit_find_and_add_import_lib(cuFile_rdma ALT cufile_rdma DEPS cuFile culibos)
+    _CUDAToolkit_find_and_add_import_lib(cuFile_rdma_static ALT cufile_rdma_static DEPS cuFile_static culibos)
   endif()
+
+    if(CUDAToolkit_VERSION VERSION_GREATER_EQUAL 11.6)
+    _CUDAToolkit_find_and_add_import_lib(cudla)
+  endif()
+
 
   # cuFFTW depends on cuFFT
   _CUDAToolkit_find_and_add_import_lib(cufftw DEPS cufft)
@@ -1086,44 +1246,60 @@ if(CUDAToolkit_FOUND)
 
   find_path(CUDAToolkit_CUPTI_INCLUDE_DIR cupti.h PATHS
       "${CUDAToolkit_ROOT_DIR}/extras/CUPTI/include"
-      "${CUDAToolkit_INCLUDE_DIR}/../extras/CUPTI/include"
-      "${CUDAToolkit_INCLUDE_DIR}"
+      "${CUDAToolkit_INCLUDE_DIRS}"
+      PATH_SUFFIXES "../extras/CUPTI/include"
+                    "../../../extras/CUPTI/include"
       NO_DEFAULT_PATH)
+  mark_as_advanced(CUDAToolkit_CUPTI_INCLUDE_DIR)
 
   if(CUDAToolkit_CUPTI_INCLUDE_DIR)
+    set(_cmake_cupti_extra_paths extras/CUPTI/lib64/
+                                 extras/CUPTI/lib/
+                                 ../extras/CUPTI/lib64/
+                                 ../extras/CUPTI/lib/)
     _CUDAToolkit_find_and_add_import_lib(cupti
-                                        EXTRA_PATH_SUFFIXES extras/CUPTI/lib64/
-                                                            extras/CUPTI/lib/
-                                                            ../extras/CUPTI/lib64/
-                                                            ../extras/CUPTI/lib/
+                                        EXTRA_PATH_SUFFIXES ${_cmake_cupti_extra_paths}
                                         EXTRA_INCLUDE_DIRS "${CUDAToolkit_CUPTI_INCLUDE_DIR}")
     _CUDAToolkit_find_and_add_import_lib(cupti_static
-                                        EXTRA_PATH_SUFFIXES extras/CUPTI/lib64/
-                                                            extras/CUPTI/lib/
-                                                            ../extras/CUPTI/lib64/
-                                                            ../extras/CUPTI/lib/
+                                        EXTRA_PATH_SUFFIXES ${_cmake_cupti_extra_paths}
                                         EXTRA_INCLUDE_DIRS "${CUDAToolkit_CUPTI_INCLUDE_DIR}")
+    if(CUDAToolkit_VERSION VERSION_GREATER_EQUAL 10.2.0)
+      _CUDAToolkit_find_and_add_import_lib(nvperf_host
+                                          EXTRA_PATH_SUFFIXES ${_cmake_cupti_extra_paths}
+                                          EXTRA_INCLUDE_DIRS "${CUDAToolkit_CUPTI_INCLUDE_DIR}")
+      _CUDAToolkit_find_and_add_import_lib(nvperf_host_static
+                                          EXTRA_PATH_SUFFIXES ${_cmake_cupti_extra_paths}
+                                          EXTRA_INCLUDE_DIRS "${CUDAToolkit_CUPTI_INCLUDE_DIR}")
+      _CUDAToolkit_find_and_add_import_lib(nvperf_target
+                                          EXTRA_PATH_SUFFIXES ${_cmake_cupti_extra_paths}
+                                          EXTRA_INCLUDE_DIRS "${CUDAToolkit_CUPTI_INCLUDE_DIR}")
+    endif()
+    if(CUDAToolkit_VERSION VERSION_GREATER_EQUAL 11.3.0)
+      _CUDAToolkit_find_and_add_import_lib(pcsamplingutil
+                                          EXTRA_PATH_SUFFIXES ${_cmake_cupti_extra_paths}
+                                          EXTRA_INCLUDE_DIRS "${CUDAToolkit_CUPTI_INCLUDE_DIR}")
+    endif()
   endif()
 
   if(CUDAToolkit_VERSION VERSION_GREATER_EQUAL 11.1.0)
     if(NOT TARGET CUDA::nvptxcompiler_static)
       _CUDAToolkit_find_and_add_import_lib(nvptxcompiler_static DEPS cuda_driver)
       if(TARGET CUDA::nvptxcompiler_static)
-        target_link_libraries(CUDA::nvptxcompiler_static INTERFACE Threads::Threads)
+        target_link_libraries(CUDA::nvptxcompiler_static INTERFACE CUDA::cudart_static_deps)
       endif()
     endif()
   endif()
 
-  if(CUDAToolkit_VERSION VERSION_GREATER_EQUAL 12.0.0)
-    _CUDAToolkit_find_and_add_import_lib(nvJitLink DEPS cuda_driver)
-    _CUDAToolkit_find_and_add_import_lib(nvJitLink_static DEPS cuda_driver)
-  endif()
-
-  _CUDAToolkit_find_and_add_import_lib(nvrtc_builtins DEPS cuda_driver)
+  _CUDAToolkit_find_and_add_import_lib(nvrtc_builtins ALT nvrtc-builtins DEPS cuda_driver)
   _CUDAToolkit_find_and_add_import_lib(nvrtc DEPS nvrtc_builtins nvJitLink)
   if(CUDAToolkit_VERSION VERSION_GREATER_EQUAL 11.5.0)
     _CUDAToolkit_find_and_add_import_lib(nvrtc_builtins_static ALT nvrtc-builtins_static DEPS cuda_driver)
-    _CUDAToolkit_find_and_add_import_lib(nvrtc_static DEPS nvrtc_builtins_static nvptxcompiler_static nvJitLink_static)
+    if(NOT TARGET CUDA::nvrtc_static)
+      _CUDAToolkit_find_and_add_import_lib(nvrtc_static DEPS nvrtc_builtins_static nvptxcompiler_static nvJitLink_static)
+      if(TARGET CUDA::nvrtc_static AND WIN32 AND NOT (BORLAND OR MINGW OR CYGWIN))
+        target_link_libraries(CUDA::nvrtc_static INTERFACE Ws2_32.lib)
+      endif()
+    endif()
   endif()
 
   _CUDAToolkit_find_and_add_import_lib(nvml ALT nvidia-ml nvml)

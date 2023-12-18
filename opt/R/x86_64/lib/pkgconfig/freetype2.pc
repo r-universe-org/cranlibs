@@ -6,7 +6,7 @@ includedir=/opt/R/x86_64/include
 Name: FreeType 2
 URL: https://freetype.org
 Description: A free, high-quality, and portable font engine.
-Version: 25.0.19
+Version: 26.1.20
 Requires: zlib, libpng, harfbuzz >= 2.0.0
 Requires.private: 
 Libs: -L/opt/R/x86_64/lib -lfreetype -lbz2

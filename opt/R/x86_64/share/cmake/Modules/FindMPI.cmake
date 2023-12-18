@@ -436,7 +436,7 @@ function (_MPI_interrogate_compiler LANG)
   # a particular MPICH derivate might check compiler interoperability.
   # Intel MPI in particular does this with I_MPI_CHECK_COMPILER.
   file(TO_NATIVE_PATH "${CMAKE_${LANG}_COMPILER}" _MPI_UNDERLAYING_COMPILER)
-  # On Windows, the Intel MPI batch scripts can only work with filnames - Full paths will break them.
+  # On Windows, the Intel MPI batch scripts can only work with filenames - Full paths will break them.
   # Due to the lack of other MPICH-based wrappers for Visual C++, we may treat this as default.
   if(MSVC)
     get_filename_component(_MPI_UNDERLAYING_COMPILER "${_MPI_UNDERLAYING_COMPILER}" NAME)
@@ -1554,7 +1554,7 @@ foreach(LANG IN ITEMS C CXX Fortran)
           endif()
         endif()
 
-        # We are on a Cray, environment identfier: PE_ENV is set (CRAY), and
+        # We are on a Cray, environment identifier: PE_ENV is set (CRAY), and
         # have NOT found an mpic++-like compiler wrapper (previous block),
         # and we do NOT use the Cray cc/CC compiler wrappers as CC/CXX CMake
         # compiler.

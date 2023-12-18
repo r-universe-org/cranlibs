@@ -8,6 +8,19 @@ else()
 endif()
 set(CMAKE_INCLUDE_FLAG_HIP "-I")
 
+# Set implicit links early so compiler-specific modules can use them.
+set(__IMPLICIT_LINKS)
+foreach(dir ${CMAKE_HIP_HOST_IMPLICIT_LINK_DIRECTORIES})
+  string(APPEND __IMPLICIT_LINKS " -L\"${dir}\"")
+endforeach()
+foreach(lib ${CMAKE_HIP_HOST_IMPLICIT_LINK_LIBRARIES})
+  if(${lib} MATCHES "/")
+    string(APPEND __IMPLICIT_LINKS " \"${lib}\"")
+  else()
+    string(APPEND __IMPLICIT_LINKS " -l${lib}")
+  endif()
+endforeach()
+
 # Load compiler-specific information.
 if(CMAKE_HIP_COMPILER_ID)
   include(Compiler/${CMAKE_HIP_COMPILER_ID}-HIP OPTIONAL)
@@ -129,7 +142,7 @@ endif()
 # compile a HIP file into an object file
 if(NOT CMAKE_HIP_COMPILE_OBJECT)
   set(CMAKE_HIP_COMPILE_OBJECT
-    "<CMAKE_HIP_COMPILER> <DEFINES> <INCLUDES> <FLAGS> -o <OBJECT> ${_CMAKE_COMPILE_AS_HIP_FLAG} -c <SOURCE>")
+    "<CMAKE_HIP_COMPILER> ${_CMAKE_HIP_EXTRA_FLAGS} <DEFINES> <INCLUDES> <FLAGS> -o <OBJECT> ${_CMAKE_COMPILE_AS_HIP_FLAG} -c <SOURCE>")
 endif()
 
 # compile a cu file into an executable
@@ -142,7 +155,7 @@ set(CMAKE_HIP_INFORMATION_LOADED 1)
 
 # Load the file and find the relevant HIP runtime.
 if(NOT DEFINED _CMAKE_HIP_DEVICE_RUNTIME_TARGET)
-  set(hip-lang_DIR "${CMAKE_HIP_COMPILER_ROCM_ROOT}/lib/cmake/hip-lang")
+  set(hip-lang_DIR "${CMAKE_HIP_COMPILER_ROCM_LIB}/cmake/hip-lang")
   find_package(hip-lang CONFIG QUIET NO_DEFAULT_PATH REQUIRED)
 endif()
 if(DEFINED _CMAKE_HIP_DEVICE_RUNTIME_TARGET)
