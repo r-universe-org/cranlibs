@@ -1,12 +1,19 @@
 #!/bin/sh
 set -e
 
+# Workaround for big-sur being deprecated on homebrew
+if [ "${OSTYPE:6:2}" = "20" ]; then
+curl -OL https://raw.githubusercontent.com/autobrew/bundler/master/lib/bigsur-reset.sh
+chmod +x bigsur-reset.sh && ./bigsur-reset.sh
+fi
+brew install cmake gnu-tar findutils
+brew install autobrew/cran/zstd-static
+
 # Switch between intel and arm
 ARCH=$(uname -m)
 HOMEBREW=$(brew --prefix)
 DEST="${PWD}/opt/R/${ARCH}"
 #PATH=/opt/homebrew/bin:$PATH
-brew install cmake zstd gnu-tar findutils
 
 #This would fail once there are duplicate packages in the folder:
 #wget -r -np -nv -R "index.html*" https://mac.r-project.org/bin/darwin20/${ARCH}/
@@ -58,7 +65,7 @@ mkdir -p share/cmake/Templates
 cp -f ${HOMEBREW}/opt/cmake/share/cmake/Templates/C* share/cmake/Templates/
 cp -R ${HOMEBREW}/opt/cmake/share/cmake/Modules share/cmake/
 cp -v ${HOMEBREW}/opt/gnu-tar/bin/gtar ./bin/
-cp -v ${HOMEBREW}/opt/zstd/bin/{zstd,unzstd} ./bin/
+cp -v ${HOMEBREW}/opt/zstd-static/bin/{zstdmt,zstd,unzstd} ./bin/
 cp -v $(brew --repo)/Library/Homebrew/os/mac/pkgconfig/11/* ./lib/pkgconfig/
 
 # Copy to final location
