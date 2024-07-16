@@ -487,7 +487,11 @@ if(NOT LAPACK_NOT_FOUND_MESSAGE)
     set(_lapack_openblas_lib "openblas")
 
     if(_lapack_sizeof_integer EQUAL 8)
-      string(APPEND _lapack_openblas_lib "64")
+      if(MINGW)
+        string(APPEND _lapack_openblas_lib "_64")
+      else()
+        string(APPEND _lapack_openblas_lib "64")
+      endif()
     endif()
 
     check_lapack_libraries(
@@ -736,6 +740,14 @@ if(NOT LAPACK_NOT_FOUND_MESSAGE)
 
     unset(_lapack_nvhpc_lib)
     unset(_lapack_nvhpc_flags)
+  endif()
+
+  # libblastrampoline? (https://github.com/JuliaLinearAlgebra/libblastrampoline/tree/main)
+  if(NOT LAPACK_LIBRARIES
+      AND (BLA_VENDOR STREQUAL "libblastrampoline" OR BLA_VENDOR STREQUAL "All"))
+    if(BLAS_LIBRARIES MATCHES "blastrampoline.+")
+      set(LAPACK_LIBRARIES ${BLAS_LIBRARIES})
+    endif()
   endif()
 
   # Generic LAPACK library?

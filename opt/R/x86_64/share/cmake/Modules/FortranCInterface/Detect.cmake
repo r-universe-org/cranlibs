@@ -10,7 +10,7 @@ if(NOT EXISTS ${FortranCInterface_BINARY_DIR}/Output.cmake
     OR NOT EXISTS ${FortranCInterface_BINARY_DIR}/Input.cmake
     OR NOT ${FortranCInterface_BINARY_DIR}/Output.cmake
       IS_NEWER_THAN ${FortranCInterface_BINARY_DIR}/Input.cmake
-    OR NOT ${FortranCInterface_SOURCE_DIR}/Output.cmake
+    OR NOT ${FortranCInterface_BINARY_DIR}/Output.cmake
       IS_NEWER_THAN ${FortranCInterface_SOURCE_DIR}/Output.cmake.in
     OR NOT ${FortranCInterface_BINARY_DIR}/Output.cmake
       IS_NEWER_THAN ${FortranCInterface_SOURCE_DIR}/CMakeLists.txt
@@ -76,8 +76,11 @@ endif()
 # Load symbols from INFO:symbol[] strings in the executable.
 set(FortranCInterface_SYMBOLS)
 if(FortranCInterface_EXE)
+  cmake_policy(PUSH)
+  cmake_policy(SET CMP0159 NEW) # file(STRINGS) with REGEX updates CMAKE_MATCH_<n>
   file(STRINGS "${FortranCInterface_EXE}" _info_strings
     LIMIT_COUNT 8 REGEX "INFO:[A-Za-z0-9_]+\\[[^]]*\\]")
+  cmake_policy(POP)
   foreach(info ${_info_strings})
     if("${info}" MATCHES "INFO:symbol\\[([^]]*)\\]")
       list(APPEND FortranCInterface_SYMBOLS ${CMAKE_MATCH_1})
@@ -177,7 +180,6 @@ endforeach()
 # Record the detection results.
 configure_file(${FortranCInterface_SOURCE_DIR}/Output.cmake.in
                ${FortranCInterface_BINARY_DIR}/Output.cmake @ONLY)
-file(APPEND ${FortranCInterface_BINARY_DIR}/Output.cmake "\n")
 
 # Report the results.
 if(FortranCInterface_GLOBAL_FOUND)

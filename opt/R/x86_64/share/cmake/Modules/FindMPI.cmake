@@ -265,6 +265,7 @@ Additionally, the following variables are deprecated:
 
 cmake_policy(PUSH)
 cmake_policy(SET CMP0057 NEW) # if IN_LIST
+cmake_policy(SET CMP0159 NEW) # file(STRINGS) with REGEX updates CMAKE_MATCH_<n>
 
 include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
 find_package(PkgConfig QUIET)
@@ -282,6 +283,9 @@ set(_MPI_Fortran_GENERIC_COMPILER_NAMES    mpif95   mpif95_r  mpf95   mpf95_r
 set(_MPI_Fujitsu_C_COMPILER_NAMES        mpifccpx mpifcc)
 set(_MPI_Fujitsu_CXX_COMPILER_NAMES      mpiFCCpx mpiFCC)
 set(_MPI_Fujitsu_Fortran_COMPILER_NAMES  mpifrtpx mpifrt)
+set(_MPI_FujitsuClang_C_COMPILER_NAMES            mpifccpx mpifcc)
+set(_MPI_FujitsuClang_CXX_COMPILER_NAMES          mpiFCCpx mpiFCC)
+set(_MPI_FujitsuClang_Fortran_COMPILER_NAMES      mpifrtpx mpifrt)
 
 # GNU compiler names
 set(_MPI_GNU_C_COMPILER_NAMES              mpigcc mpgcc mpigcc_r mpgcc_r)
@@ -301,9 +305,9 @@ if(WIN32)
   set(_MPI_Intel_Fortran_COMPILER_NAMES      mpiifort.bat mpif77.bat mpif90.bat)
 
   # Intel MPI compiler names
-  set(_MPI_IntelLLVM_C_COMPILER_NAMES            mpiicc.bat)
-  set(_MPI_IntelLLVM_CXX_COMPILER_NAMES          mpiicpc.bat)
-  set(_MPI_IntelLLVM_Fortran_COMPILER_NAMES      mpiifort.bat mpif77.bat mpif90.bat)
+  set(_MPI_IntelLLVM_C_COMPILER_NAMES            mpiicx.bat mpiicc.bat)
+  set(_MPI_IntelLLVM_CXX_COMPILER_NAMES          mpiicx.bat mpiicpc.bat) # Not GNU-like mpiicpx.bat
+  set(_MPI_IntelLLVM_Fortran_COMPILER_NAMES      mpiifx.bat mpiifort.bat mpif77.bat mpif90.bat)
 
   # Intel MPI compiler names for MSMPI
   set(_MPI_MSVC_C_COMPILER_NAMES             mpicl.bat)
@@ -315,9 +319,9 @@ else()
   set(_MPI_Intel_Fortran_COMPILER_NAMES      mpiifort mpiif95 mpiif90 mpiif77)
 
   # Intel compiler names
-  set(_MPI_IntelLLVM_C_COMPILER_NAMES            mpiicc)
-  set(_MPI_IntelLLVM_CXX_COMPILER_NAMES          mpiicpc  mpiicxx mpiic++)
-  set(_MPI_IntelLLVM_Fortran_COMPILER_NAMES      mpiifort mpiif95 mpiif90 mpiif77)
+  set(_MPI_IntelLLVM_C_COMPILER_NAMES            mpiicx mpiicc)
+  set(_MPI_IntelLLVM_CXX_COMPILER_NAMES          mpiicpx mpiicpc mpiicxx mpiic++)
+  set(_MPI_IntelLLVM_Fortran_COMPILER_NAMES      mpiifx mpiifort mpiif95 mpiif90 mpiif77)
 endif()
 
 # PGI compiler names
