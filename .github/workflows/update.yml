@@ -12,7 +12,7 @@ name: Download latest libs from CRAN
 jobs:
   Build:
     # OS matters because we copy 'cmake' and 'zstd' binaries from homebrew
-    runs-on: macos-11
+    runs-on: macos-12
     steps:
       - name: Prepare git
         run: |
