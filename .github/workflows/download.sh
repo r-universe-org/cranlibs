@@ -19,7 +19,7 @@ DEST="${PWD}/opt/R/${ARCH}"
 #wget -r -np -nv -R "index.html*" https://mac.r-project.org/bin/darwin20/${ARCH}/
 
 # Download all the libs
-rm -Rf ${DEST} out files.log
+rm -Rf $(dirname ${DEST}) out files.log
 mkdir out
 mkdir packages
 mkdir -p ${DEST}
@@ -47,6 +47,10 @@ done
 mv bin oldbin
 mkdir bin
 
+# Suggested by SU email Jul 15, 2024
+curl -sS https://mac.r-project.org/openmp/openmp-14.0.6-darwin20-Release.tar.gz \
+ | tar vxz --strip 3 -C include/ usr/local/include
+
 # nb: h5++ seems missing ?
 (cd oldbin; mv -v h5cc protoc *config ../bin/)
 chmod +x ./bin/*
@@ -66,7 +70,7 @@ cp -f ${HOMEBREW}/opt/cmake/share/cmake/Templates/C* share/cmake/Templates/
 cp -R ${HOMEBREW}/opt/cmake/share/cmake/Modules share/cmake/
 cp -v ${HOMEBREW}/opt/gnu-tar/bin/gtar ./bin/
 cp -v ${HOMEBREW}/opt/zstd-static/bin/{zstdmt,zstd,unzstd} ./bin/
-cp -v $(brew --repo)/Library/Homebrew/os/mac/pkgconfig/11/* ./lib/pkgconfig/
+cp -v $(brew --repo)/Library/Homebrew/os/mac/pkgconfig/13/* ./lib/pkgconfig/
 
 # Copy to final location
 mv bin lib include share ${DEST}/
