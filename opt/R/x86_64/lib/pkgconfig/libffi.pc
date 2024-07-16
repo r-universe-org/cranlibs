@@ -1,4 +1,4 @@
-homebrew_sdkroot=/Library/Developer/CommandLineTools/SDKs/MacOSX11.sdk
+homebrew_sdkroot=/Library/Developer/CommandLineTools/SDKs/MacOSX13.sdk
 prefix=${homebrew_sdkroot}/usr
 exec_prefix=/usr
 libdir=${exec_prefix}/lib
@@ -7,6 +7,6 @@ includedir=${prefix}/include/ffi
 
 Name: libffi
 Description: Library supporting Foreign Function Interfaces
-Version: 3.3-rc0
+Version: 3.4-rc1
 Libs: -L${toolexeclibdir} -lffi
 Cflags: -I${includedir}

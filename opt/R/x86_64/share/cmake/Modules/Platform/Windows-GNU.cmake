@@ -88,6 +88,7 @@ else()
                                              "LINKER:--no-whole-archive")
 endif()
 set(CMAKE_LINK_LIBRARY_USING_WHOLE_ARCHIVE_SUPPORTED TRUE)
+set(CMAKE_LINK_LIBRARY_WHOLE_ARCHIVE_ATTRIBUTES LIBRARY_TYPE=STATIC DEDUPLICATION=YES OVERRIDE=DEFAULT)
 
 # Features for LINK_GROUP generator expression
 ## RESCAN: request the linker to rescan static libraries until there is
@@ -111,6 +112,13 @@ macro(__windows_compiler_gnu lang)
     set(CMAKE_${type}_LINK_STATIC_${lang}_FLAGS "-Wl,-Bstatic")
     set(CMAKE_${type}_LINK_DYNAMIC_${lang}_FLAGS "-Wl,-Bdynamic")
   endforeach()
+
+  set(CMAKE_${lang}_VERBOSE_LINK_FLAG "-Wl,-v")
+
+  # linker selection
+  set(CMAKE_${lang}_USING_LINKER_SYSTEM "")
+  set(CMAKE_${lang}_USING_LINKER_BFD "-fuse-ld=bfd")
+  set(CMAKE_${lang}_USING_LINKER_LLD "-fuse-ld=lld")
 
   # No -fPIC on Windows
   set(CMAKE_${lang}_COMPILE_OPTIONS_PIC "")

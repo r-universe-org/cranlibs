@@ -40,6 +40,7 @@ else()
                                              "LINKER:--no-whole-archive")
 endif()
 set(CMAKE_LINK_LIBRARY_USING_WHOLE_ARCHIVE_SUPPORTED TRUE)
+set(CMAKE_LINK_LIBRARY_WHOLE_ARCHIVE_ATTRIBUTES LIBRARY_TYPE=STATIC DEDUPLICATION=YES OVERRIDE=DEFAULT)
 
 
 macro(__cygwin_compiler_gnu lang)
@@ -51,6 +52,8 @@ macro(__cygwin_compiler_gnu lang)
   set(CMAKE_${lang}_LINK_EXECUTABLE
     "<CMAKE_${lang}_COMPILER> <FLAGS> <CMAKE_${lang}_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> -Wl,--out-implib,<TARGET_IMPLIB> ${CMAKE_GNULD_IMAGE_VERSION} <LINK_LIBRARIES>")
   set(CMAKE_${lang}_CREATE_WIN32_EXE "-mwindows")
+
+  set(CMAKE_${lang}_VERBOSE_LINK_FLAG "-Wl,-v")
 
    # No -fPIC on cygwin
   set(CMAKE_${lang}_COMPILE_OPTIONS_PIC "")
