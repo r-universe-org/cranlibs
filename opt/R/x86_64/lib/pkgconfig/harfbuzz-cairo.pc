@@ -5,8 +5,9 @@ includedir=/opt/R/x86_64/include
 
 Name: harfbuzz cairo integration
 Description: HarfBuzz cairo integration
-Version: 8.2.1
+Version: 8.5.0
 
-Requires: harfbuzz = 8.2.1
+Requires: harfbuzz = 8.5.0
+Requires.private: cairo
 Libs: -L${libdir} -lharfbuzz-cairo
 Cflags: -I${includedir}/harfbuzz

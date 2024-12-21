@@ -4,15 +4,11 @@
 /* Define if building universal (internal helper macro) */
 /* #undef H4_AC_APPLE_UNIVERSAL_BUILD */
 
-/* int* greater or equal to 8 bytes */
-#define H4_BIG_LONGS 1
-
 /* Define to dummy `main' function (if any) required to link to the Fortran
    libraries. */
 /* #undef H4_F77_DUMMY_MAIN */
 
-/* Define to a macro mangling the given C identifier (in lower and upper
-   case), which must not contain underscores, for linking with Fortran. */
+/* Define H4_F77_FUNC as name ## */
 /* #undef H4_F77_FUNC */
 
 /* As F77_FUNC, but for C identifiers containing underscores. */
@@ -27,9 +23,6 @@
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #define H4_HAVE_ARPA_INET_H 1
 
-/* Define to 1 if you have the <arpa/nameser.h> header file. */
-#define H4_HAVE_ARPA_NAMESER_H 1
-
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #define H4_HAVE_DLFCN_H 1
 
@@ -39,17 +32,11 @@
 /* Define to 1 if you have the `fork' function. */
 #define H4_HAVE_FORK 1
 
-/* Define to 1 if you have the `htonl' function. */
-#define H4_HAVE_HTONL 1
-
-/* Define to 1 if you have the `htons' function. */
-#define H4_HAVE_HTONS 1
+/* Define to 1 if you have the `getrusage' function. */
+#define H4_HAVE_GETRUSAGE 1
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define H4_HAVE_INTTYPES_H 1
-
-/* Define to 1 if you have the <io.h> header file. */
-/* #undef H4_HAVE_IO_H */
 
 /* Define to 1 if you have the <jpeglib.h> header file. */
 #define H4_HAVE_JPEGLIB_H 1
@@ -57,38 +44,29 @@
 /* Define to 1 if you have the `jpeg' library (-ljpeg). */
 #define H4_HAVE_LIBJPEG 1
 
+/* Define to 1 if you have the `m' library (-lm). */
+#define H4_HAVE_LIBM 1
+
 /* Define to 1 if you have the `sz' library (-lsz). */
 /* #undef H4_HAVE_LIBSZ */
+
+/* Define to 1 if you have the `ws2_32' library (-lws2_32). */
+/* #undef H4_HAVE_LIBWS2_32 */
 
 /* Define to 1 if you have the `z' library (-lz). */
 #define H4_HAVE_LIBZ 1
 
-/* Define to 1 if you have the <memory.h> header file. */
-#define H4_HAVE_MEMORY_H 1
-
-/* Define if we support HDF NetCDF APIs version 2.3.2 */
+/* Define if we export HDF4-built unmangled netCDF 2.3.2 API calls */
 /* #undef H4_HAVE_NETCDF */
-
-/* Define to 1 if you have the <netdb.h> header file. */
-#define H4_HAVE_NETDB_H 1
 
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #define H4_HAVE_NETINET_IN_H 1
 
-/* Define to 1 if you have the `ntohl' function. */
-#define H4_HAVE_NTOHL 1
-
-/* Define to 1 if you have the `ntohs' function. */
-#define H4_HAVE_NTOHS 1
-
-/* Define to 1 if you have the <resolv.h> header file. */
-#define H4_HAVE_RESOLV_H 1
-
-/* Define to 1 if you have the <stddef.h> header file. */
-#define H4_HAVE_STDDEF_H 1
-
 /* Define to 1 if you have the <stdint.h> header file. */
 #define H4_HAVE_STDINT_H 1
+
+/* Define to 1 if you have the <stdio.h> header file. */
+#define H4_HAVE_STDIO_H 1
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #define H4_HAVE_STDLIB_H 1
@@ -117,6 +95,9 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #define H4_HAVE_SYS_TYPES_H 1
 
+/* Define to 1 if you have the <sys/wait.h> header file. */
+#define H4_HAVE_SYS_WAIT_H 1
+
 /* Define if szip has encoder */
 /* #undef H4_HAVE_SZIP_ENCODER */
 
@@ -126,23 +107,14 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #define H4_HAVE_UNISTD_H 1
 
-/* Define to 1 if you have the `vfork' function. */
-#define H4_HAVE_VFORK 1
-
 /* Define to 1 if you have the `wait' function. */
 #define H4_HAVE_WAIT 1
 
+/* Define if we export HDF4-built unmangled netCDF 2.3.2 API calls */
+/* #undef H4_HAVE_WIN32_API */
+
 /* Define to 1 if you have the <zlib.h> header file. */
 #define H4_HAVE_ZLIB_H 1
-
-/* Define to 1 if you have the `__builtin_bswap16' function. */
-/* #undef H4_HAVE___BUILTIN_BSWAP16 */
-
-/* Define to 1 if you have the `__builtin_bswap32' function. */
-/* #undef H4_HAVE___BUILTIN_BSWAP32 */
-
-/* Define to 1 if you have the `__builtin_bswap64' function. */
-/* #undef H4_HAVE___BUILTIN_BSWAP64 */
 
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
@@ -154,9 +126,6 @@
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
 /* #undef H4_NO_MINUS_C_MINUS_O */
 
-/* Not using system xdr */
-#define H4_NO_SYS_XDR_INC 1
-
 /* Name of package */
 #define H4_PACKAGE "hdf"
 
@@ -167,7 +136,7 @@
 #define H4_PACKAGE_NAME "HDF"
 
 /* Define to the full name and version of this package. */
-#define H4_PACKAGE_STRING "HDF 4.2.15"
+#define H4_PACKAGE_STRING "HDF 4.2.17-1"
 
 /* Define to the one symbol short name of this package. */
 #define H4_PACKAGE_TARNAME "hdf"
@@ -176,25 +145,27 @@
 #define H4_PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define H4_PACKAGE_VERSION "4.2.15"
+#define H4_PACKAGE_VERSION "4.2.17-1"
 
-/* The size of `int*', as computed by sizeof. */
-#define H4_SIZEOF_INTP 8
+/* The size of `long', as computed by sizeof. */
+#define H4_SIZEOF_LONG 8
 
-/* Define to 1 if you have the ANSI C header files. */
+/* Define to 1 if all of the C90 standard headers exist (not just the ones
+   required in a freestanding environment). This macro is provided for
+   backward compatibility; new code need not use it. */
 #define H4_STDC_HEADERS 1
 
 /* Version number of package */
-#define H4_VERSION "4.2.15"
+#define H4_VERSION "4.2.17-1"
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */
 #if defined AC_APPLE_UNIVERSAL_BUILD
 # if defined __BIG_ENDIAN__
-#  define WORDS_BIGENDIAN 1
+# define H4_WORDS_BIGENDIAN 1
 # endif
 #else
 # ifndef WORDS_BIGENDIAN
-/* #  undef WORDS_BIGENDIAN */
+/* # undef H4_WORDS_BIGENDIAN */
 # endif
 #endif

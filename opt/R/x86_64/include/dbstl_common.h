@@ -50,8 +50,8 @@
 
 
 // Thread local storage modifier declaration.
-#define	HAVE_PTHREAD_TLS
-
+#define	TLS_DECL_MODIFIER	__thread
+#define	TLS_DEFN_MODIFIER	__thread
 
 #if !defined(TLS_DECL_MODIFIER) && !defined(HAVE_PTHREAD_TLS)
 #error "No appropriate TLS modifier defined."

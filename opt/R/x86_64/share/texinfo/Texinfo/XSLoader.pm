@@ -1,4 +1,4 @@
-# Copyright 2014-2019 Free Software Foundation, Inc.
+# Copyright 2014-2023 Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,15 +15,25 @@
 
 package Texinfo::XSLoader;
 
-use DynaLoader;
-
 use 5.00405;
 use strict;
 use warnings;
 
+use DynaLoader;
+
+BEGIN {
+  eval 'require Texinfo::ModulePath';
+  if ($@ ne '') {
+    # For configure test in TestXS.pm where Texinfo/ModulePath.pm may
+    # not exist yet.
+    $Texinfo::ModulePath::texinfo_uninstalled = 1;
+    $Texinfo::ModulePath::builddir = '';
+  }
+}
+
 our $TEXINFO_XS;
 
-our $VERSION = '6.8';
+our $VERSION = '7.1';
 
 our $disable_XS;
 
@@ -160,7 +170,8 @@ sub init {
   my $flags = 0;
   my $libref = DynaLoader::dl_load_file($dlpath, $flags);
   if (!$libref) {
-    _fatal "$module_name: couldn't load file $dlpath";
+    my $message = DynaLoader::dl_error();
+    _fatal "$module_name: couldn't load file $dlpath: $message";
     goto FALLBACK;
   }
   _debug "$dlpath loaded";
@@ -205,11 +216,15 @@ sub init {
   
   if ($perl_extra_file) {
     eval "require $perl_extra_file";
+    if ($@) {
+      warn();
+      die "Error loading $perl_extra_file\n";
+    }
   }
   
   return $module;
   
-FALLBACK:
+ FALLBACK:
   if ($TEXINFO_XS eq 'required') {
     die "unset the TEXINFO_XS environment variable to use the "
        ."pure Perl modules\n";
@@ -224,7 +239,7 @@ FALLBACK:
 
   # Fall back to using the Perl code.
   # Use eval here to interpret :: properly in module name.
-  eval "require $fallback_module";
+  eval "require $fallback_module; Texinfo::Parser->import();";
   if ($@) {
     warn();
     die "Error loading $fallback_module\n";

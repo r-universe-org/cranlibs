@@ -4,10 +4,10 @@
 General Information:
 -------------------
                    HDF5 Version: 1.12.2
-                  Configured on: Mon Nov 13 23:44:08 EST 2023
-                  Configured by: urbanek@ipyr
-                    Host system: x86_64-apple-darwin22.4.0
-              Uname information: Darwin ipyr 22.4.0 Darwin Kernel Version 22.4.0: Mon Mar  6 21:00:17 PST 2023; root:xnu-8796.101.5~3/RELEASE_X86_64 x86_64
+                  Configured on: Fri Jul 26 11:44:35 NZST 2024
+                  Configured by: rbuild@rbuilds.local
+                    Host system: x86_64-apple-darwin22.3.0
+              Uname information: Darwin rbuilds.local 22.3.0 Darwin Kernel Version 22.3.0: Mon Jan 30 20:37:48 PST 2023; root:xnu-8792.81.3~2/RELEASE_ARM64_VMAPPLE x86_64
                        Byte sex: little-endian
              Installation point: /opt/R/x86_64
 
@@ -34,7 +34,7 @@ Linking Options:
 Languages:
 ----------
                               C: yes
-                     C Compiler: /usr/bin/clang ( Apple clang version 14.0.3 )
+                     C Compiler: /usr/bin/clang ( Apple clang version 14.0.0 )
                        CPPFLAGS: -I/opt/R/x86_64/include
                     H5_CPPFLAGS:   -DNDEBUG -UH5_DEBUG_API
                     AM_CPPFLAGS: 

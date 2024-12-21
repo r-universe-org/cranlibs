@@ -1,6 +1,6 @@
 # TextContent.pm: return the text contents stripped of commands
 #
-# Copyright 2012-2018 Free Software Foundation, Inc.
+# Copyright 2012-2023 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,12 +22,20 @@ package Texinfo::Convert::TextContent;
 use 5.00405;
 use strict;
 
-use Texinfo::Convert::Converter;
-use Texinfo::Convert::Text;
+# To check if there is no erroneous autovivification
+#no autovivification qw(fetch delete exists store strict);
+
+use Texinfo::Commands;
 use Texinfo::Common;
+use Texinfo::Convert::Utils;
+use Texinfo::Convert::Text;
+use Texinfo::Convert::Converter;
 
 use vars qw($VERSION @ISA);
 @ISA = qw(Texinfo::Convert::Converter);
+
+$VERSION = '7.1';
+
 
 my %ignored_brace_commands;
 # Handle better @errormsg?
@@ -36,20 +44,24 @@ foreach my $ignored_brace_command ('hyphenation', 'errormsg') {
 }
 my %ignored_block_commands;
 foreach my $ignored_command (
-  'html', 'tex', 'xml', 'docbook', 'ignore', 'macro', 'rmacro') {
+  'html', 'tex', 'xml', 'docbook', 'latex', 'ignore', 'macro', 'rmacro',
+  'linemacro') {
   $ignored_block_commands{$ignored_command} = 1;
 }
 
 my %ignored_types;
-foreach my $type ('empty_line_after_command', 'preamble',
-            'empty_spaces_after_command',
-            'empty_spaces_before_paragraph',
-            'empty_spaces_after_close_brace') {
+foreach my $type ('ignorable_spaces_after_command',
+            'postamble_after_end',
+            'preamble_before_beginning',
+            'spaces_before_paragraph',
+            'spaces_after_close_brace') {
   $ignored_types{$type} = 1;
 }
 
 my %defaults = (
+  # Customization option variables
   'FORMAT_MENU'          => 'menu',
+  # different from the default, which is undef
   'OUTFILE'              => '-',
 );
 
@@ -62,12 +74,11 @@ sub converter_initialize($)
 {
   my $self = shift;
   
-  %{$self->{'formatting_misc_commands'}}
-    = %Texinfo::Convert::Text::formatting_misc_commands;
-
+  %{$self->{'formatted_line_commands'}}
+    = %Texinfo::Commands::formatted_line_commands;
   if ($self->get_conf('TEXTCONTENT_COMMENT')) {
-    $self->{'formatting_misc_commands'}->{'c'} = 1;
-    $self->{'formatting_misc_commands'}->{'comment'} = 1;
+    $self->{'formatted_line_commands'}->{'c'} = 1;
+    $self->{'formatted_line_commands'}->{'comment'} = 1;
   }
 }
 
@@ -92,72 +103,80 @@ sub _convert($$);
 sub _convert($$)
 {
   my $self = shift;
-  my $root = shift;
+  my $element = shift;
 
-  return '' if (!($root->{'type'} and $root->{'type'} eq 'def_line')
-     and (($root->{'type'} and $ignored_types{$root->{'type'}})
-          or ($root->{'cmdname'}
-             and ($ignored_brace_commands{$root->{'cmdname'}}
-                 or ($ignored_block_commands{$root->{'cmdname'}}
+  return '' if (!($element->{'type'} and $element->{'type'} eq 'def_line')
+     and (($element->{'type'} and $ignored_types{$element->{'type'}})
+          or ($element->{'cmdname'}
+             and ($ignored_brace_commands{$element->{'cmdname'}}
+                 or ($ignored_block_commands{$element->{'cmdname'}}
                      and !(defined($self->{'expanded_formats_hash'})
-                           and $self->{'expanded_formats_hash'}->{$root->{'cmdname'}}))
-                 or ($Texinfo::Common::inline_format_commands{$root->{'cmdname'}}
-                     and (!$root->{'extra'}->{'format'}
-                          or !$self->{'expanded_formats_hash'}->{$root->{'extra'}->{'format'}}))
-                 or ($root->{'cmdname'} eq 'menu' and $self->get_conf('FORMAT_MENU') eq 'nomenu')
-             # here ignore most of the misc commands
-                 or ($root->{'args'} and $root->{'args'}->[0]
-                     and $root->{'args'}->[0]->{'type'}
-                     and ($root->{'args'}->[0]->{'type'} eq 'line_arg'
-                         or $root->{'args'}->[0]->{'type'} eq 'misc_arg')
-                     and !$self->{'formatting_misc_commands'}->{$root->{'cmdname'}})))));
-  if (defined($root->{'text'})) {
-    return $root->{'text'};
+                           and $self->{'expanded_formats_hash'}->{$element->{'cmdname'}}))
+                 or ($Texinfo::Commands::inline_format_commands{$element->{'cmdname'}}
+                     and (!$element->{'extra'}->{'format'}
+                          or !$self->{'expanded_formats_hash'}->{$element->{'extra'}->{'format'}}))
+                 or ($element->{'cmdname'} eq 'menu' and $self->get_conf('FORMAT_MENU') eq 'nomenu')
+             # here ignore most of the line commands
+                 or ($element->{'args'} and $element->{'args'}->[0]
+                     and $element->{'args'}->[0]->{'type'}
+                     and ($element->{'args'}->[0]->{'type'} eq 'line_arg'
+                          or $element->{'args'}->[0]->{'type'} eq 'rawline_arg')
+                     and !$self->{'formatted_line_commands'}->{$element->{'cmdname'}})))));
+  if (defined($element->{'text'})) {
+    return $element->{'text'};
   }
-  if (defined($root->{'cmdname'})) {
-    if (exists($Texinfo::Common::no_brace_commands{$root->{'cmdname'}})) {
-      return $Texinfo::Common::no_brace_commands{$root->{'cmdname'}};
-    } elsif ($root->{'cmdname'} eq 'today') {
+  if (defined($element->{'cmdname'})) {
+    if (exists($Texinfo::Common::nobrace_symbol_text{$element->{'cmdname'}})) {
+      return $Texinfo::Common::nobrace_symbol_text{$element->{'cmdname'}};
+    } elsif ($element->{'cmdname'} eq 'today') {
+      if ($self->get_conf('TEST')) {
+        return 'a sunny day';
+      }
       my($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
         = localtime(time);
       $year += ($year < 70) ? 2000 : 1900;
-      return "$Texinfo::Common::MONTH_NAMES[$mon] $mday, $year";
-    } elsif (defined($Texinfo::Convert::Text::text_brace_no_arg_commands{$root->{'cmdname'}})) {
-      return Texinfo::Convert::Text::brace_no_arg_command($root, undef);
-    } elsif ($Texinfo::Common::accent_commands{$root->{'cmdname'}}) {
-      my %options = Texinfo::Common::_convert_text_options($self);
-      my $result = Texinfo::Convert::Text::text_accents ($root, 
+      return "$Texinfo::Convert::Utils::MONTH_NAMES[$mon] $mday, $year";
+    } elsif (defined($Texinfo::Convert::Text::text_brace_no_arg_commands{$element->{'cmdname'}})) {
+      return Texinfo::Convert::Text::brace_no_arg_command($element, undef);
+    } elsif ($Texinfo::Commands::accent_commands{$element->{'cmdname'}}) {
+      my %options = Texinfo::Convert::Text::copy_options_for_convert_text($self);
+      my $result = Texinfo::Convert::Text::text_accents($element,
                                         $options{'enabled_encoding'});
       return $result;
     }
   }
   my $result = '';
-  if ($root->{'args'} 
-      and (!$root->{'cmdname'} 
-           or !$Texinfo::Common::block_item_commands{$root->{'cmdname'}})) {
+  if ($element->{'args'}
+      and (!$element->{'cmdname'}
+           or !$Texinfo::Commands::blockitem_commands{$element->{'cmdname'}})) {
     my $args;
-    if ($root->{'cmdname'} 
-      and $Texinfo::Common::inline_format_commands{$root->{'cmdname'}}) {
-      my @args = @{$root->{'args'}};
+    if ($element->{'cmdname'}
+        and $Texinfo::Commands::inline_format_commands{$element->{'cmdname'}}) {
+      my @args = @{$element->{'args'}};
       shift @args;
       $args = \@args;
     } else {
-      $args = $root->{'args'};
+      $args = $element->{'args'};
     }
     foreach my $arg (@{$args}) {
-      $result .= _convert ($self, $arg);
+      $result .= _convert($self, $arg);
+      if ($arg->{'type'}
+          and $arg->{'type'} eq 'block_line_arg'
+          and $arg->{'info'} and $arg->{'info'}->{'spaces_after_argument'}
+          and $result =~ /\S/) {
+        $result .= $arg->{'info'}->{'spaces_after_argument'}->{'text'};
+      }
     }
   }
-  if ($root->{'contents'}) {
-    foreach my $content (@{$root->{'contents'}}) {
-      $result .= _convert ($self, $content);
+  if ($element->{'contents'}) {
+    foreach my $content (@{$element->{'contents'}}) {
+      $result .= _convert($self, $content);
     }
   }
-  $result = '{'.$result.'}'
-     if ($root->{'type'} and $root->{'type'} eq 'bracketed'
-         and (!$root->{'parent'}->{'type'} or
-              ($root->{'parent'}->{'type'} ne 'block_line_arg'
-               and $root->{'parent'}->{'type'} ne 'line_arg')));
+
+  if ($element->{'type'} and $element->{'type'} eq 'line_arg') {
+    $result .= "\n";
+  }
 
   return $result;
 }

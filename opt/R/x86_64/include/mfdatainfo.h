@@ -11,37 +11,23 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef MFDATAINFO_H
-#define MFDATAINFO_H
+#ifndef MFH4_MFDATAINFO_H
+#define MFH4_MFDATAINFO_H
 
-#include "H4api_adpt.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-/* Activate raw datainfo interface - added for hmap project in 2010 */
-#if defined DATAINFO_MASTER || defined DATAINFO_TESTER
+/*****************************************************************************
+ *
+ * mfdatainfo.h
+ *
+ * The public APIs in this file were moved into mfhdf.h in version 4.3.0.
+ * Applications don't need to and should no longer include this header file.
+ *
+ ******************************************************************************/
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
-{
-#endif                          /* c_plusplus || __cplusplus */
-
-/* Public functions for getting raw data information */
-
-HDFLIBAPI intn SDgetdatainfo
-    (int32 sdsid, int32 *chk_coord, uintn start_block, uintn info_count,
-	int32 *offsetarray, int32 *lengtharray);
-
-HDFLIBAPI intn SDgetattdatainfo
-    (int32 id, int32 attrindex, int32 *offset, int32 *length);
-
-HDFLIBAPI intn SDgetoldattdatainfo
-    (int32 dimid, int32 sdsid, char *attr_name, int32 *offset, int32 *length);
-
-HDFLIBAPI intn SDgetanndatainfo
-    (int32 sdsid, ann_type annot_type, uintn size, int32* offsetarray,
-	int32* lengtharray);
-
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif /* c_plusplus || __cplusplus */
-#endif /* DATAINFO_MASTER || DATAINFO_TESTER */
-#endif /* _MF_DATAINFO */
+#endif
+#endif /* MFH4_MFDATAINFO_H */

@@ -5,8 +5,8 @@
 -------
 NetCDF Version:		4.8.1
 Dispatch Version:       3
-Configured On:		Mon Nov 13 23:46:16 EST 2023
-Host System:		x86_64-apple-darwin22.4.0
+Configured On:		Fri Jul 26 11:48:40 NZST 2024
+Host System:		x86_64-apple-darwin22.3.0
 Build Directory: 	/Volumes/Builds/recipes/build/netcdf-4.8.1-obj
 Install Prefix:         /opt/R/x86_64
 

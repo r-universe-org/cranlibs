@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2019-2023 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+// Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -51,7 +51,7 @@ enum class client_errc : int
     /// actual parameters.
     wrong_num_params,
 
-    /// The connection mandatory SSL, but the server doesn't accept SSL connections.
+    /// The connection mandates SSL, but the server doesn't accept SSL connections.
     server_doesnt_support_ssl,
 
     /// The static interface detected a mismatch between your C++ type definitions and what the server
@@ -67,6 +67,47 @@ enum class client_errc : int
 
     /// The static interface encountered an error when parsing a field into a C++ data structure.
     static_row_parsing_error,
+
+    /// (EXPERIMENTAL) An operation controlled by Boost.MySQL timed out.
+    timeout,
+
+    /// (EXPERIMENTAL) An operation controlled by Boost.MySQL was cancelled.
+    cancelled,
+
+    /// (EXPERIMENTAL) Getting a connection from a connection_pool failed because the
+    /// pool is not running. Ensure that you're calling connection_pool::async_run.
+    pool_not_running,
+
+    /// (EXPERIMENTAL) An invalid byte sequence was found while trying to decode a string.
+    invalid_encoding,
+
+    /// (EXPERIMENTAL) A formatting operation could not format one of its arguments.
+    unformattable_value,
+
+    /// (EXPERIMENTAL) A format string containing invalid syntax was provided to a SQL formatting function.
+    format_string_invalid_syntax,
+
+    /// (EXPERIMENTAL) A format string with an invalid byte sequence was provided to a SQL formatting
+    /// function.
+    format_string_invalid_encoding,
+
+    /// (EXPERIMENTAL) A format string mixes manual (e.g. {0}) and automatic (e.g. {}) indexing.
+    format_string_manual_auto_mix,
+
+    /// (EXPERIMENTAL) The supplied format specifier (e.g. {:i}) is not supported by the type being formatted.
+    format_string_invalid_specifier,
+
+    /// (EXPERIMENTAL) A format argument referenced by a format string was not found. Check the number
+    /// of format arguments passed and their names.
+    format_arg_not_found,
+
+    /// (EXPERIMENTAL) The character set used by the connection is not known by the client. Use
+    /// set_character_set or async_set_character_set before invoking operations that require a known charset.
+    unknown_character_set,
+
+    /// (EXPERIMENTAL) An operation attempted to read or write a packet larger than the maximum buffer size.
+    /// Try increasing \ref any_connection_params::max_buffer_size.
+    max_buffer_size_exceeded,
 };
 
 BOOST_MYSQL_DECL

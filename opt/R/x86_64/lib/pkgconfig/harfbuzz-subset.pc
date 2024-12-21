@@ -5,8 +5,8 @@ includedir=/opt/R/x86_64/include
 
 Name: harfbuzz subsetter
 Description: HarfBuzz font subsetter
-Version: 8.2.1
+Version: 8.5.0
 
-Requires: harfbuzz = 8.2.1
+Requires: harfbuzz = 8.5.0
 Libs: -L${libdir} -lharfbuzz-subset
 Cflags: -I${includedir}/harfbuzz

@@ -226,6 +226,11 @@ This module will set the following variables in your project
 
   The Python 3 include directories.
 
+``Python3_DEFINITIONS``
+  .. versionadded:: 3.30.3
+
+  The Python 3 preprocessor definitions.
+
 ``Python3_DEBUG_POSTFIX``
   .. versionadded.. 3.30
 
@@ -325,7 +330,8 @@ Hints
 
   .. note::
 
-    If ``Python3_FIND_ABI`` is not defined, any ABI will be searched.
+    If ``Python3_FIND_ABI`` is not defined, any ABI, excluding the
+    ``gil_disabled`` flag, will be searched.
 
   From this 4-tuple, various ABIs will be searched starting from the most
   specialized to the most general. Moreover, when ``ANY`` is specified for
@@ -443,7 +449,7 @@ Hints
     See `IronPython <https://ironpython.net>`_.
   * ``PyPy``: This implementation use ``RPython`` language and
     ``RPython translation toolchain`` to produce the python interpreter.
-    See `PyPy <https://www.pypy.org>`_.
+    See `PyPy <https://pypy.org>`_.
 
   The default value is:
 

@@ -141,6 +141,10 @@ div.toc ul ul {
     margin-left: 1em;
 }
 
+div.toc-sidebar a {
+    text-decoration: none;
+}
+
 div.toc a[toc-current] {
     font-weight: bold
 }
@@ -166,13 +170,12 @@ table#keyboard-shortcuts th {
     display: none;
     position: fixed;
     z-index: 1;
-    padding-top: 100px;
+    padding-top: 40px;
     left: 25%;
     top: 0;
+    bottom: 0px;
     width: 75%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: #888; /* Fallback color */
     background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
 }
 
@@ -182,6 +185,8 @@ table#keyboard-shortcuts th {
     margin: auto;
     padding: 20px;
     width: 80%;
+    max-height: 100%;
+    overflow-y: auto;
 }
 
 /*-------.
@@ -223,6 +228,10 @@ table#keyboard-shortcuts th {
 .error .text-input {
     top: 0;
     right: 0;
+}
+
+.text-input input {
+    width: 25em;
 }
 
 .error {

@@ -1,5 +1,5 @@
 /* info.js - Javascript UI for Texinfo manuals
-   Copyright (C) 2017-2019 Free Software Foundation, Inc.
+   Copyright (C) 2017-2023 Free Software Foundation, Inc.
 
    This file is part of GNU Texinfo.
 
@@ -35,7 +35,7 @@
     SCREEN_MIN_WIDTH: 700,
     LOCAL_HTML_PAGE_PATTERN: "^([^:/]*[.](html|htm|xhtml))?([#].*)?$",
     SHOW_SIDEBAR_HTML: '<span class="hide-icon">&#x21db;</span>',
-    HIDE_SIDEBAR_HTML: '<span class="hide-icon">&#x21da;</span><span class="hide-text">Hide sidebar</span>',
+    HIDE_SIDEBAR_HTML: '<span class="hide-icon">&#x21da;</span><span class="hide-text"></span>',
     SHOW_SIDEBAR_TOOLTIP: 'Show navigation sidebar',
     HIDE_SIDEBAR_TOOLTIP: 'Hide navigation sidebar',
 
@@ -120,7 +120,7 @@
         @arg {string} linkid - link identifier
         @arg {string|false} [history] - method name that will be applied on
         the 'window.history' object.  */
-    set_current_url: function (linkid, history, clicked = false) {
+    set_current_url: function (linkid, history, clicked) {
       if (undef_or_null (history))
         history = "pushState";
       return { type: "current-url", url: linkid,
@@ -146,10 +146,32 @@
     /** @arg {NodeListOf<Element>} links */
     cache_index_links: function (links) {
       var dict = {};
+      var text0 = "", text1 = ""; // for subentries
       for (var i = 0; i < links.length; i += 1)
         {
           var link = links[i];
-          dict[link.textContent] = href_hash (link_href (link));
+          var link_cl = link.classList;
+          var text = link.textContent;
+          if (link_cl.contains("index-entry-level-2"))
+            {
+                text = text0 + "; " + text1 + "; " + text;
+            }
+          else if (link_cl.contains("index-entry-level-1"))
+            {
+              text1 = text;
+                text = text0 + "; " + text;
+            }
+          else
+            {
+              text0 = text;
+            }
+
+          if ((link = link.nextSibling)
+              && link.classList.contains("printindex-index-section")
+              && (link = link.firstChild))
+            {
+              dict[text] = href_hash (link_href (link));
+            }
         }
       return { type: "cache-index-links", links: dict };
     },
@@ -174,6 +196,10 @@
     /** @arg {string} msg */
     warn: function (msg) {
       return { type: "warning", msg: msg };
+    },
+
+    window_title: function (title) {
+      return { type: "window-title", title: title };
     },
 
     /** Search EXP in the whole manual.
@@ -223,6 +249,7 @@
         }
       case "cache-index-links":
         {
+          // Initially res.index is undefined, which is ignored.
           res.index = Object.assign ({}, res.index, action.links);
           return res;
         }
@@ -245,6 +272,7 @@
           res.history = action.history;
           res.text_input = null;
           res.warning = null;
+          res.window_title = null;
           res.help = false;
           res.focus = false;
           res.highlight = null;
@@ -337,6 +365,7 @@
               res.history = action.history;
               res.text_input = null;
               res.warning = null;
+              res.window_title = null;
               res.help = false;
               res.highlight = null;
               res.focus = false;
@@ -422,6 +451,11 @@
       case "echo":
         {
           res.echo = action.msg;
+          return res;
+        }
+      case "window-title":
+        {
+          res.window_title = action.title;
           return res;
         }
       case "warning":
@@ -649,7 +683,12 @@
       var index = new Text_input ("index");
       index.render = function (state) {
         if (state.text_input === "index")
-          this.show (state.index);
+        {
+          if (state.index)
+            this.show (state.index);
+          else
+            store.dispatch (actions.warn ("No index in this document"))
+        }
       };
 
       var search = new Search_input ("regexp-search");
@@ -835,6 +874,7 @@
       /** @type {HTMLElement} */
       this.prev_div = null;
       this.prev_search = null;
+      this.main_title = document.title;
     }
 
     Pages.prototype.add_div = function add_div (pageid) {
@@ -864,7 +904,7 @@
 
       /* Blur pages if help screen is on.  */
       this.element.classList[(state.help) ? "add" : "remove"] ("blurred");
-
+      let div = this.prev_div;
       if (state.current !== this.prev_id)
         {
           if (this.prev_id)
@@ -875,11 +915,17 @@
               var msg = { message_kind: "highlight", regexp: null };
               post_message (old.pageid, msg);
             }
-          var div = resolve_page (state.current, true);
+          div = resolve_page (state.current, true);
           update_history (state.current, state.history);
           this.prev_id = state.current;
           this.prev_div = div;
         }
+        if (state.action.type === "window-title") {
+            div.setAttribute("title", state.action.title);
+        }
+        let title = div.getAttribute("title") || this.main_title;
+        if (title && document.title !== title)
+            document.title = title;
 
       if (state.search
           && (this.prev_search !== state.search)
@@ -1153,7 +1199,7 @@
       store.dispatch ({ type: "iframe-ready", id: config.INDEX_ID });
       store.dispatch ({
         type: "echo",
-        msg: "Welcome to Texinfo documentation viewer 6.1, type '?' for help."
+        msg: "Welcome to Texinfo documentation viewer 7.1, type '?' for help."
       });
 
       /* Call user hook.  */
@@ -1332,6 +1378,8 @@
     add_header (elem)
     {
       var h1 = document.querySelector ("h1.settitle");
+      if (!h1)
+        h1 = document.querySelector ("h1.top");
       if (h1)
         {
           var a = document.createElement ("a");
@@ -1425,12 +1473,15 @@
       var linkid = basename (window.location.pathname, /[.]x?html$/);
       links[linkid] = navigation_links (document);
       store.dispatch (actions.cache_links (links));
+      if (document.title)
+         store.dispatch (actions.window_title (document.title));
 
       if (linkid_contains_index (linkid))
         {
           /* Scan links that should be added to the index.  */
-          var index_links = document.querySelectorAll ("td[valign=top] a");
-          store.dispatch (actions.cache_index_links (index_links));
+          var index_entries = document.querySelectorAll
+            ("td.printindex-index-entry");
+          store.dispatch (actions.cache_index_links (index_entries));
         }
 
       add_icons ();
@@ -1589,6 +1640,7 @@
               val ();
             else
               store.dispatch (val);
+            event.preventDefault();
           }
       }
   }
@@ -2158,7 +2210,7 @@
            backward link ids.  */
         loaded_nodes: {},
         /* Dictionary associating keyword to linkids.  */
-        index: {},
+        index: undefined,
         /* page id of the current page.  */
         current: config.INDEX_ID,
         /* dictionary associating a page id to a boolean.  */

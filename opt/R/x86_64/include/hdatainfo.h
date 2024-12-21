@@ -11,58 +11,24 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id: hproto.h 5400 2010-04-22 03:45:32Z bmribler $ */
+#ifndef H4_HDATAINFO_H
+#define H4_HDATAINFO_H
 
-#ifndef _HDATAINFO_H
-#define _HDATAINFO_H
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include "H4api_adpt.h"
+/*****************************************************************************
+ *
+ * hdatainfo.h
+ *
+ * The public structure and APIs in this file were moved into hproto.h in
+ * version 4.3.0.  Applications don't need to and should no longer include this
+ * header file.
+ *
+ ******************************************************************************/
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
-{
-#endif                          /* c_plusplus || __cplusplus */
-
-/* Structure that holds a data descriptor.  First added for GRgetpalinfo. */
-typedef struct hdf_ddinfo_t
-{
-    uint16 tag;
-    uint16 ref;
-    int32 offset;
-    int32 length;
-} hdf_ddinfo_t;
-
-/* Public functions for getting raw data information */
-
-    HDFLIBAPI intn ANgetdatainfo
-		(int32 ann_id, int32 *offset, int32 *length);
-
-    HDFLIBAPI intn HDgetdatainfo
-		(int32 file_id, uint16 data_tag, uint16 data_ref,
-		 int32 *chk_coord, uintn start_block, uintn info_count,
-		 int32 *offsetarray, int32 *lengtharray);
-
-    HDFLIBAPI intn VSgetdatainfo
-		(int32 vsid, uintn start_block, uintn info_count,
-		 int32 *offsetarray, int32 *lengtharray);
-
-    HDFLIBAPI intn VSgetattdatainfo
-		(int32 vsid, int32 findex, intn attrindex, int32 *offset, int32 *length);
-
-    HDFLIBAPI intn Vgetattdatainfo
-		(int32 vgid, intn attrindex, int32 *offset, int32 *length);
-
-    HDFLIBAPI intn GRgetdatainfo
-		(int32 riid, uintn start_block, uintn info_count,
-		 int32 *offsetarray, int32 *lengtharray);
-
-    HDFLIBAPI intn GRgetattdatainfo
-		(int32 id, int32 attrindex, int32 *offset, int32 *length);
-
-    HDFLIBAPI intn GRgetpalinfo(int32 gr_id, uintn pal_count, hdf_ddinfo_t *palinfo_array);
-
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif				/* c_plusplus || __cplusplus */
-#endif                          /* _HDATAINFO */
-
+#endif
+#endif /* H4_HDATAINFO */

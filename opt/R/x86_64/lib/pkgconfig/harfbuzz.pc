@@ -5,7 +5,7 @@ includedir=/opt/R/x86_64/include
 
 Name: harfbuzz
 Description: HarfBuzz text shaping library
-Version: 8.2.1
+Version: 8.5.0
 
 Libs: -L${libdir} -lharfbuzz
 Libs.private: -lm      

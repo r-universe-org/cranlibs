@@ -5,7 +5,7 @@ includedir=/opt/R/x86_64/include
 
 Name: harfbuzz
 Description: HarfBuzz text shaping library ICU integration
-Version: 8.2.1
+Version: 8.5.0
 
 Requires: harfbuzz
 Requires.private: icu-uc

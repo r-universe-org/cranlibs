@@ -15,15 +15,16 @@
  * Unidata, to assist in its use, correction, modification, or enhancement.
  *
  */
-/* "$Id$" */
 
 #ifndef _NETCDF_
 #define _NETCDF_
 
+#include <inttypes.h>
+
 #include "H4api_adpt.h"
 
 /*
- * The definitions ncvoid, USE_ENUM, and MAX_NC_OPEN, may need to be set
+ * The definitions ncvoid and MAX_NC_OPEN, may need to be set
  * properly for your installation.
  */
 
@@ -36,23 +37,6 @@
 /* system doesn't have void type */
 #define ncvoid    char
 #endif
-
-
-/*
- *   If xdr_enum works properly on your system, you can define
- * USE_ENUM so that nc_type is an enum.
- * Otherwise, delete this definition so that the nc_type is
- * an int and the valid values are #defined.
- */
-#ifndef __APPLE__
-/* xdr_enum does not work properly for Mac Lion using the Apple GCC compiler
-i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1 (Based on Apple Inc. build 5658) (LLVM build 2336.1.00)
- */
-/* Do not use it for all Macs for now. See ticket HDFFR-1318. */
-/* So define USE_ENUM only if this is not an APPLE. */
-#define USE_ENUM
-#endif
-
 
 /*
  * The following macro is provided for backward compatibility only.  If you
@@ -87,7 +71,7 @@ i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1 (Based on Apple Inc. build 5658) (L
 
 #if !NC_OLD_FILLVALUES
 
-#   define FILL_FLOAT    9.9692099683868690e+36 /* near 15 * 2^119 */
+#   define FILL_FLOAT     9.9692099683868690e+36F /* near 15 * 2^119 */
 #   define FILL_DOUBLE    9.9692099683868690e+36
 
 #else    /* NC_OLD_FILLVALUES below */
@@ -103,9 +87,9 @@ i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1 (Based on Apple Inc. build 5658) (L
 
 /*
  * XDR_F_INFINITY is a float value whose EXTERNAL (xdr)
- * represention is ieee floating infinity.
+ * representation is ieee floating infinity.
  * XDR_D_INFINITY is a double value whose EXTERNAL (xdr)
- * represention is ieee double floating point infinity.
+ * representation is ieee double floating point infinity.
  * These are used as default fill values below.
  *
  * This section shows three techniques for setting these:
@@ -116,7 +100,7 @@ i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1 (Based on Apple Inc. build 5658) (L
  *      any ANSI compiler with IEEE floating point representations,
  *      modulo byte order and sizeof() considerations.
  *  Use of pointer puns - may work with many older compilers
- *      which don't allow intialization of unions.
+ *      which don't allow initialization of unions.
  *      Often doesn't work with compilers which have strict
  *      alignment rules.
  */
@@ -240,27 +224,10 @@ i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1 (Based on Apple Inc. build 5658) (L
 
 #endif /* HDF */
 
-#ifdef USE_ENUM
-/*
- *  The netcdf data types
+/* This type used to be defined as an enum, but the C standard is a bit
+ * vague as to which integer type you actually get to represent your enum
+ * and passing that through a pointer caused failures on MacOS.
  */
-typedef enum {
-    NC_UNSPECIFIED, /* private */
-    NC_BYTE,
-    NC_CHAR,
-    NC_SHORT,
-    NC_LONG,
-    NC_FLOAT,
-    NC_DOUBLE,
-    /* private */
-    NC_BITFIELD,
-    NC_STRING,
-    NC_IARRAY,
-    NC_DIMENSION,
-    NC_VARIABLE,
-    NC_ATTRIBUTE
-} nc_type ;
-#else
 typedef int nc_type ;
 #define    NC_UNSPECIFIED 0 /* private */
 #define    NC_BYTE 1
@@ -276,8 +243,6 @@ typedef int nc_type ;
 #define    NC_DIMENSION 10
 #define    NC_VARIABLE 11
 #define    NC_ATTRIBUTE 12
-#endif
-
 
 /*
  * C data types corresponding to netCDF data types:
@@ -291,17 +256,10 @@ typedef double        ncdouble;
 */
 
 /*
- * Variables/attributes of type NC_LONG should use the C type 'nclong'
+ * Variables/attributes of type NC_LONG should use the C type 'nclong',
+ * which should map to a 32-bit integer.
  */
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
-/*
- * LP64 (also known as 4/8/8) denotes long and pointer as 64 bit types.
- * http://www.unix.org/version2/whatsnew/lp64_wp.html
- */
-typedef int     nclong;
-#else
-typedef long    nclong;         /* default, compatible type */
-#endif
+typedef int32_t nclong;
 
 
 /*
@@ -348,89 +306,75 @@ HDFLIBAPI int ncerr ;
 
 HDFLIBAPI int ncopts ;    /* default is (NC_FATAL | NC_VERBOSE) */
 
-#ifndef HAVE_PROTOTYPES
-#   if defined(__STDC__) || defined(__GNUC__) || defined(__cplusplus) || defined(c_plusplus)
-#       define    HAVE_PROTOTYPES
-#   endif
-#endif
-
-#undef PROTO
-#ifdef HAVE_PROTOTYPES
-#   define    PROTO(x)    x
-#else
-#   define    PROTO(x)    ()
-#endif
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-HDFLIBAPI int nccreate    PROTO((
+HDFLIBAPI int nccreate    (
     const char*    path,
     int        cmode
-));
-HDFLIBAPI int ncopen    PROTO((
+);
+HDFLIBAPI int ncopen    (
     const char*    path,
     int        mode
-));
-HDFLIBAPI int ncredef    PROTO((
+);
+HDFLIBAPI int ncredef    (
     int        cdfid
-));
-HDFLIBAPI int ncendef    PROTO((
+);
+HDFLIBAPI int ncendef    (
     int        cdfid
-));
-HDFLIBAPI int ncclose    PROTO((
+);
+HDFLIBAPI int ncclose    (
     int        cdfid
-));
-HDFLIBAPI int ncinquire    PROTO((
+);
+HDFLIBAPI int ncinquire    (
     int        cdfid,
     int*    ndims,
     int*    nvars,
     int*    natts,
     int*    recdim
-));
-HDFLIBAPI int ncsync    PROTO((
+);
+HDFLIBAPI int ncsync    (
     int        cdfid
-));
-HDFLIBAPI int ncabort    PROTO((
+);
+HDFLIBAPI int ncabort    (
     int        cdfid
-));
-HDFLIBAPI int ncnobuf    PROTO((
+);
+HDFLIBAPI int ncnobuf    (
     int        cdfid
-));
-HDFLIBAPI int ncdimdef    PROTO((
+);
+HDFLIBAPI int ncdimdef    (
     int        cdfid,
     const char*    name,
     long    length
-));
-HDFLIBAPI int ncdimid    PROTO((
+);
+HDFLIBAPI int ncdimid    (
     int        cdfid,
     const char*    name
-));
-HDFLIBAPI int ncdiminq    PROTO((
+);
+HDFLIBAPI int ncdiminq    (
     int        cdfid,
     int        dimid,
     char*    name,
     long*    length
-));
-HDFLIBAPI int ncdimrename    PROTO((
+);
+HDFLIBAPI int ncdimrename    (
     int        cdfid,
     int        dimid,
     const char*    name
-));
-HDFLIBAPI int ncvardef    PROTO((
+);
+HDFLIBAPI int ncvardef    (
     int        cdfid,
     const char*    name,
     nc_type    datatype,
     int        ndims,
     const int*    dim
-));
-HDFLIBAPI int ncvarid    PROTO((
+);
+HDFLIBAPI int ncvarid    (
     int        cdfid,
     const char*    name
-));
-HDFLIBAPI int ncvarinq    PROTO((
+);
+HDFLIBAPI int ncvarinq    (
     int        cdfid,
     int        varid,
     char*    name,
@@ -438,50 +382,50 @@ HDFLIBAPI int ncvarinq    PROTO((
     int*    ndims,
     int*    dim,
     int*    natts
-));
-HDFLIBAPI int ncvarput1    PROTO((
+);
+HDFLIBAPI int ncvarput1    (
     int        cdfid,
     int        varid,
     const long*    coords,
     const void*    value
-));
-HDFLIBAPI int ncvarget1    PROTO((
+);
+HDFLIBAPI int ncvarget1    (
     int        cdfid,
     int        varid,
     const long*    coords,
     void*    value
-));
-HDFLIBAPI int ncvarput    PROTO((
+);
+HDFLIBAPI int ncvarput    (
     int        cdfid,
     int        varid,
     const long*    start,
     const long*    count,
     void*    value
-));
-HDFLIBAPI int ncvarget    PROTO((
+);
+HDFLIBAPI int ncvarget    (
     int        cdfid,
     int        varid,
     const long*    start,
     const long*    count,
     void*    value
-));
-HDFLIBAPI int ncvarputs    PROTO((
+);
+HDFLIBAPI int ncvarputs    (
     int        cdfid,
     int        varid,
     const long*    start,
     const long*    count,
     const long*    stride,
     void*    values
-));
-HDFLIBAPI int ncvargets    PROTO((
+);
+HDFLIBAPI int ncvargets    (
     int        cdfid,
     int        varid,
     const long*    start,
     const long*    count,
     const long*    stride,
     void*    values
-));
-HDFLIBAPI int ncvarputg    PROTO((
+);
+HDFLIBAPI int ncvarputg    (
     int        cdfid,
     int        varid,
     const long*    start,
@@ -489,8 +433,8 @@ HDFLIBAPI int ncvarputg    PROTO((
     const long*    stride,
     const long*    imap,
     void* values
-));
-HDFLIBAPI int ncvargetg    PROTO((
+);
+HDFLIBAPI int ncvargetg    (
     int        cdfid,
     int        varid,
     const long*    start,
@@ -498,80 +442,80 @@ HDFLIBAPI int ncvargetg    PROTO((
     const long*    stride,
     const long*    imap,
     void*    values
-));
-HDFLIBAPI int ncvarrename    PROTO((
+);
+HDFLIBAPI int ncvarrename    (
     int        cdfid,
     int        varid,
     const char*    name
-));
-HDFLIBAPI int ncattput    PROTO((
+);
+HDFLIBAPI int ncattput    (
     int        cdfid,
     int        varid,
     const char*    name,
     nc_type    datatype,
     int        len,
     const void*    value
-));
-HDFLIBAPI int ncattinq    PROTO((
+);
+HDFLIBAPI int ncattinq    (
     int        cdfid,
     int        varid,
     const char*    name,
     nc_type*    datatype,
     int*    len
-));
-HDFLIBAPI int ncattget    PROTO((
+);
+HDFLIBAPI int ncattget    (
     int        cdfid,
     int        varid,
     const char*    name,
     void*    value
-));
-HDFLIBAPI int ncattcopy    PROTO((
+);
+HDFLIBAPI int ncattcopy    (
     int        incdf,
     int        invar,
     const char*    name,
     int        outcdf,
     int        outvar
-));
-HDFLIBAPI int ncattname    PROTO((
+);
+HDFLIBAPI int ncattname    (
     int        cdfid,
     int        varid,
     int        attnum,
     char*    name
-));
-HDFLIBAPI int ncattrename    PROTO((
+);
+HDFLIBAPI int ncattrename    (
     int        cdfid,
     int        varid,
     const char*    name,
     const char*    newname
-));
-HDFLIBAPI int ncattdel    PROTO((
+);
+HDFLIBAPI int ncattdel    (
     int        cdfid,
     int        varid,
     const char*    name
-));
-HDFLIBAPI int nctypelen    PROTO((
+);
+HDFLIBAPI int nctypelen    (
     nc_type    datatype
-));
-HDFLIBAPI int ncsetfill    PROTO((
+);
+HDFLIBAPI int ncsetfill    (
     int        cdfid,
     int        fillmode
-));
-HDFLIBAPI int ncrecinq        PROTO((
+);
+HDFLIBAPI int ncrecinq        (
     int        cdfid,
     int*    nrecvars,
     int*    recvarids,
     long*    recsizes
-));
-HDFLIBAPI int ncrecget        PROTO((
+);
+HDFLIBAPI int ncrecget        (
     int        cdfid,
     long    recnum,
     void**    datap
-));
-HDFLIBAPI int ncrecput        PROTO((
+);
+HDFLIBAPI int ncrecput        (
     int        cdfid,
     long    recnum,
     void* * datap
-));
+);
 #ifdef __cplusplus
 }
 #endif

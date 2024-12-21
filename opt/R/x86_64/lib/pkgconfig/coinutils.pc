@@ -7,6 +7,6 @@ Name: CoinUtils
 Description: COIN-OR Utilities
 URL: https://projects.coin-or.org/CoinUtils
 Version: 2.11.6
-Libs: -L${libdir} -lCoinUtils -lbz2 -lz -framework Accelerate -framework Accelerate -lm 
+Libs: -L${libdir} -lCoinUtils -lbz2 -lz -lm 
 Cflags: -I${includedir}
 Requires: 
