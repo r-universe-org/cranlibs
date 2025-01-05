@@ -34,7 +34,7 @@ our $top_srcdir;
 our $pkgdatadir;
 
 # Other information passed to modules from configure
-our $conversion_from_euc_cn = 'no';
+our $conversion_from_euc_cn = 'yes';
 
 # If $LIB_DIR and $LIBEXEC_DIR are given,
 # (likely the installation directories)

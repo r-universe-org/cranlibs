@@ -1,0 +1,10 @@
+prefix="/opt/R/x86_64"
+libdir="/opt/R/x86_64/lib"
+includedir="/opt/R/x86_64/include"
+
+Name: libgit2
+Description: The git library, take 2
+Version: 1.8.2
+Libs: -L${libdir} -lgit2
+Libs.private: -framework CoreFoundation -framework Security -L/opt/R/x86_64/lib -lssh2 -lssl -lcrypto -lz -L/Library/Developer/CommandLineTools/SDKs/MacOSX11.sdk/usr/lib -liconv
+Cflags: -I${includedir} 

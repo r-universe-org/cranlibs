@@ -4,18 +4,18 @@
 General Information:
 -------------------
 		   HDF4 Version: 4.3.0
-		  Configured on: Fri Jul 26 11:41:37 NZST 2024
-		  Configured by: rbuild@rbuilds.local
+		  Configured on: Sun Jan  5 03:22:03 EST 2025
+		  Configured by: urbanek@ipyr
 		 Configure mode: production
-		    Host system: x86_64-apple-darwin22.3.0
-              Uname information: Darwin rbuilds.local 22.3.0 Darwin Kernel Version 22.3.0: Mon Jan 30 20:37:48 PST 2023; root:xnu-8792.81.3~2/RELEASE_ARM64_VMAPPLE x86_64
+		    Host system: x86_64-apple-darwin22.4.0
+              Uname information: Darwin ipyr 22.4.0 Darwin Kernel Version 22.4.0: Mon Mar  6 21:00:17 PST 2023; root:xnu-8796.101.5~3/RELEASE_X86_64 x86_64
 		      Libraries: 
 	     Installation point: /opt/R/x86_64
 
 Compiling Options:
 ------------------
-                     C compiler: /usr/bin/clang ( 14.0.0)
-                         CFLAGS: -Wno-implicit-function-declaration -Wno-error=implicit-function-declaration -std=c99 -Wall -Warray-bounds -Wbad-function-cast -Wcast-align -Wcast-qual -Wconversion -Wdouble-promotion -Wextra -Wformat=2 -Wframe-larger-than=16384 -Wimplicit-fallthrough -Wimplicit-function-declaration -Wincompatible-pointer-types -Wincompatible-pointer-types-discards-qualifiers -Wmissing-declarations -Wnull-dereference -Wpacked -Wpedantic -Wshadow -Wswitch -Wunused-const-variable -Wunused-function -Wunused-variable -Wunused-parameter -Wwrite-strings -Wvolatile-register-var -Wno-c++-compat -Wno-missing-noreturn -O3
+                     C compiler: /usr/bin/clang ( 14.0.3)
+                         CFLAGS:  -Wno-error=implicit-function-declaration -std=c99 -Wall -Warray-bounds -Wbad-function-cast -Wcast-align -Wcast-qual -Wconversion -Wdouble-promotion -Wextra -Wformat=2 -Wframe-larger-than=16384 -Wimplicit-fallthrough -Wimplicit-function-declaration -Wincompatible-pointer-types -Wincompatible-pointer-types-discards-qualifiers -Wmissing-declarations -Wnull-dereference -Wpacked -Wpedantic -Wshadow -Wswitch -Wunused-const-variable -Wunused-function -Wunused-variable -Wunused-parameter -Wwrite-strings -Wvolatile-register-var -Wno-c++-compat -Wno-missing-noreturn -O3
                        CPPFLAGS: -D_POSIX_C_SOURCE=200809L -I/opt/R/x86_64/include -DNDEBUG 
                Shared Libraries: no
                Static Libraries: yes

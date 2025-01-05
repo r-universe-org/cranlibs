@@ -59,7 +59,7 @@ LIBSBASE=""
 EXIT_SUCCESS=0
 EXIT_FAILURE=1
 
-host_os="darwin22.3.0"
+host_os="darwin22.4.0"
 
 prog_name="`basename $0`"
 

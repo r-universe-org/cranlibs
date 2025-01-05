@@ -11,7 +11,7 @@
 
 # Modeled after libxml-config.
 
-version="1.6.43"
+version="1.6.44"
 prefix="/opt/R/x86_64"
 exec_prefix="${prefix}"
 libdir="${exec_prefix}/lib"

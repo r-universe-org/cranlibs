@@ -1,0 +1,13 @@
+Name: libSBML
+Description: A library for reading/writing/manipulating SBML
+URL: http://sbml.org/Software/libSBML
+Version: 5.20.2
+
+prefix=/opt/R/x86_64
+libdir=/opt/R/x86_64/lib
+includedir=/opt/R/x86_64/include
+
+Libs: -L${libdir} -lsbml
+Libs.private:        /Library/Developer/CommandLineTools/SDKs/MacOSX11.sdk/usr/lib/libxml2.tbd /Library/Developer/CommandLineTools/SDKs/MacOSX11.sdk/usr/lib/libbz2.tbd /Library/Developer/CommandLineTools/SDKs/MacOSX11.sdk/usr/lib/libz.tbd -lstdc++ -lm
+Cflags: -I${includedir}
+Requires.private: libxml-2.0 >= 2.6.22

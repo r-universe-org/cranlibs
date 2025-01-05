@@ -1,13 +1,13 @@
 prefix=/opt/R/x86_64
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
-includedir=${prefix}/include
+includedir=${prefix}/include 
 enginesdir=${libdir}/engines-3
 modulesdir=${libdir}/ossl-modules
 
 Name: OpenSSL-libcrypto
 Description: OpenSSL cryptography library
-Version: 3.2.2
+Version: 3.3.2
 Libs: -L${libdir} -lcrypto
-Libs.private:  
+Libs.private: 
 Cflags: -I${includedir}
