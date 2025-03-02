@@ -1,14 +1,15 @@
 #!/bin/sh
-CONFIG_LIBS="-L/opt/R/x86_64/lib -lgdal"
-CONFIG_DEP_LIBS="-lcrypto  -L/opt/R/x86_64/lib -lfreexl -liconv -L/opt/R/x86_64/lib -lgeos_c -lgeos -lm -lstdc++ -lwebp -lodbc -lodbcinst -L/opt/R/x86_64/lib -lexpat -L/opt/R/x86_64/lib -lopenjp2 -lm -L/opt/R/x86_64/lib -L/opt/R/x86_64/lib -lnetcdf -lhdf5_hl -lhdf5 -lm -lz -lcurl -L/opt/R/x86_64/lib -lsz -lhdf5 -lmfhdf -ldf -lpng -L/opt/R/x86_64/lib -lpq -lpgcommon -lpgport -lm -llz4 -lzstd -llzma -lproj -L/opt/R/x86_64/lib -lproj -lc++ -lm -ldl -lsqlite3 -lz -ltiff -lwebp -llzma -ljpeg -lz -lwebp -lm -D_THREAD_SAFE -pthread -lsharpyuv -lm -D_THREAD_SAFE -pthread -llzma -pthread -lpthread -ljpeg -lz -lcurl -lsz -L/opt/R/x86_64/lib -lsqlite3 -ljpeg -lz -lpthread -ldl  -lpcre2-8   -lcurl        -liconv  -lxml2 -lpthread -lz -lm      "
+CONFIG_LIBS="`pkg-config --libs gdal`"
+CONFIG_DEP_LIBS=""
 CONFIG_PREFIX="/opt/R/x86_64"
 CONFIG_CFLAGS="-I/opt/R/x86_64/include"
 CONFIG_DATA="/opt/R/x86_64/share/gdal"
-CONFIG_VERSION="3.5.3"
-CONFIG_OGR_ENABLED=yes
+CONFIG_VERSION="3.8.5"
 CONFIG_GNM_ENABLED=yes
-CONFIG_FORMATS="derived gtiff hfa mem vrt  aaigrid adrg aigrid airsar arg blx bmp bsb cals ceos ceos2 coasp cosar ctg dimap dted elas envisat ers esric fit gff gsg gxf hf2 idrisi ilwis iris iso8211 jaxapalsar jdem kmlsuperoverlay l1b leveller map mrf msgn ngsgeoid nitf northwood pds prf r raw rmf rs2 safe saga sdts sentinel2 sgi sigdem srtmhgt stacit stacta terragen tga til tsx usgsdem xpm xyz zarr zmap rik ozi eeda plmosaic wcs wms wmts daas ogcapi rasterlite mbtiles grib pdf webp openjpeg netcdf hdf5 hdf4 gif png pcraster jpeg  pcidsk postgisraster"
+CONFIG_FORMATS="JPEG raw GTIFF MEM vrt Derived HFA SDTS NITF GXF AAIGrid CEOS SAR_CEOS XPM DTED JDEM Envisat ELAS FIT L1B RS2 ILWIS RMF Leveller SGI SRTMHGT IDRISI GSG ERS PALSARJaxa DIMAP GFF COSAR PDS ADRG COASP TSX Terragen BLX MSGN TIL R northwood SAGA XYZ ESRIC HF2 KMLSUPEROVERLAY CTG ZMap NGSGEOID IRIS MAP CALS SAFE SENTINEL2 PRF MRF WMTS GRIB BMP TGA STACTA BSB AIGrid ARG USGSDEM AirSAR OZI PCIDSK SIGDEM RIK STACIT PDF PNG GIF WCS HTTP netCDF Zarr DAAS EEDA HDF5 PLMOSAIC WMS OGCAPI WEBP HDF4 Rasterlite MBTiles PostGISRaster JP2OpenJPEG PCRaster MEM geojson TAB Shape KML VRT AVC GML CSV DGN GMT NTF S57 Tiger Geoconcept GeoRSS DXF PGDump GPSBabel EDIGEO SXF OpenFileGDB WAsP Selafin JML VDV FlatGeobuf MapML JSONFG SDTS GPX SVG CSW PLSCENES WFS NGW Elastic Idrisi PDS SQLite GeoPackage OSM VFK MVT PMTiles AmigoCloud Carto PG MSSQLSpatial ODBC PGeo XLSX XLS CAD GTFS ODS LVBAG"
+CONFIG_PLUGINDIR="/opt/R/x86_64/lib/gdalplugins"
 usage()
+
 {
 	cat <<EOF
 Usage: gdal-config [OPTIONS]
@@ -22,6 +23,7 @@ Options:
 	[--ogr-enabled]
 	[--gnm-enabled]
 	[--formats]
+	[--plugindir]
 EOF
 	exit $1
 }
@@ -65,6 +67,10 @@ case $1 in
 
   --formats)
     echo $CONFIG_FORMATS
+    ;;
+
+  --plugindir)
+    echo $CONFIG_PLUGINDIR
     ;;
 
   *)

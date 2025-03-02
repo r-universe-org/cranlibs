@@ -96,6 +96,7 @@ class PROJ_GCC_DLL CRS : public common::ObjectUsage,
 
     // Non-standard
 
+    PROJ_DLL bool isDynamic(bool considerWGS84AsDynamic = false) const;
     PROJ_DLL GeodeticCRSPtr extractGeodeticCRS() const;
     PROJ_DLL GeographicCRSPtr extractGeographicCRS() const;
     PROJ_DLL VerticalCRSPtr extractVerticalCRS() const;
@@ -164,6 +165,9 @@ class PROJ_GCC_DLL CRS : public common::ObjectUsage,
     getResolvedCRS(const CRSNNPtr &crs,
                    const io::AuthorityFactoryPtr &authFactory,
                    metadata::ExtentPtr &extentOut);
+
+    PROJ_INTERNAL std::string getOriginatingAuthName() const;
+
     //! @endcond
 
   protected:
@@ -1063,7 +1067,8 @@ class PROJ_GCC_DLL BoundCRS final : public CRS,
 
     PROJ_INTERNAL BoundCRSNNPtr shallowCloneAsBoundCRS() const;
     PROJ_INTERNAL bool isTOWGS84Compatible() const;
-    PROJ_INTERNAL std::string getHDatumPROJ4GRIDS() const;
+    PROJ_INTERNAL std::string
+    getHDatumPROJ4GRIDS(const io::DatabaseContextPtr &databaseContext) const;
     PROJ_INTERNAL std::string
     getVDatumPROJ4GRIDS(const crs::GeographicCRS *geogCRSOfCompoundCRS,
                         const char **outGeoidCRSValue) const;
@@ -1272,6 +1277,10 @@ class PROJ_GCC_DLL DerivedProjectedCRS final : public DerivedCRS {
            const ProjectedCRSNNPtr &baseCRSIn,
            const operation::ConversionNNPtr &derivingConversionIn,
            const cs::CoordinateSystemNNPtr &csIn);
+
+    PROJ_DLL DerivedProjectedCRSNNPtr
+    demoteTo2D(const std::string &newName,
+               const io::DatabaseContextPtr &dbContext) const;
 
     //! @cond Doxygen_Suppress
     PROJ_INTERNAL void _exportToWKT(io::WKTFormatter *formatter)

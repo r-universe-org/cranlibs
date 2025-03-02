@@ -50,8 +50,6 @@ namespace quadedge { //geos.triangulate.quadedge
 
 class TriangleVisitor;
 
-const double EDGE_COINCIDENCE_TOL_FACTOR = 1000;
-
 /** \brief
  * A class that contains the [QuadEdges](@ref QuadEdge) representing a planar
  * subdivision that models a triangulation.
@@ -112,7 +110,7 @@ public:
      * that encloses a supplied bounding box.
      * A new super-bounding box that contains the triangle is computed and stored.
      *
-     * @param env the bouding box to surround
+     * @param env the bounding box to surround
      * @param tolerance the tolerance value for determining if two sites are equal
      */
     QuadEdgeSubdivision(const geom::Envelope& env, double tolerance);
@@ -514,4 +512,3 @@ public:
 } //namespace geos.triangulate.quadedge
 } //namespace geos.triangulate
 } //namespace goes
-

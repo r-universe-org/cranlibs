@@ -1,0 +1,11 @@
+prefix=/opt/R/x86_64
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libgeotiff
+Description: GeoTIFF file format library
+Version: 1.7.3
+Libs: -L${libdir} -lgeotiff
+Cflags: -I${includedir}
+Requires.private: proj, libtiff-4

@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2022 Jay Berkenbilt
+// Copyright (c) 2005-2024 Jay Berkenbilt
 //
 // This file is part of qpdf.
 //
@@ -23,7 +23,7 @@
 #define RANDOMDATAPROVIDER_HH
 
 #include <qpdf/DLL.h>
-#include <string.h> // for size_t
+#include <cstring> // for size_t
 
 class QPDF_DLL_CLASS RandomDataProvider
 {

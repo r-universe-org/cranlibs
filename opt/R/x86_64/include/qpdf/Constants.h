@@ -1,4 +1,4 @@
-/* Copyright (c) 2005-2022 Jay Berkenbilt
+/* Copyright (c) 2005-2024 Jay Berkenbilt
  *
  * This file is part of qpdf.
  *
@@ -83,14 +83,15 @@ enum qpdf_exit_code_e {
 
 enum qpdf_error_code_e {
     qpdf_e_success = 0,
-    qpdf_e_internal,    /* logic/programming error -- indicates bug */
-    qpdf_e_system,      /* I/O error, memory error, etc. */
-    qpdf_e_unsupported, /* PDF feature not (yet) supported by qpdf */
-    qpdf_e_password,    /* incorrect password for encrypted file */
-    qpdf_e_damaged_pdf, /* syntax errors or other damage in PDF */
-    qpdf_e_pages,       /* erroneous or unsupported pages structure */
-    qpdf_e_object,      /* type/bounds errors accessing objects */
-    qpdf_e_json,        /* error in qpdf JSON */
+    qpdf_e_internal,      /* logic/programming error -- indicates bug */
+    qpdf_e_system,        /* I/O error, memory error, etc. */
+    qpdf_e_unsupported,   /* PDF feature not (yet) supported by qpdf */
+    qpdf_e_password,      /* incorrect password for encrypted file */
+    qpdf_e_damaged_pdf,   /* syntax errors or other damage in PDF */
+    qpdf_e_pages,         /* erroneous or unsupported pages structure */
+    qpdf_e_object,        /* type/bounds errors accessing objects */
+    qpdf_e_json,          /* error in qpdf JSON */
+    qpdf_e_linearization, /* linearization warning */
 };
 
 /* Object Types */
@@ -229,9 +230,16 @@ enum pdf_annotation_flag_e {
 };
 
 /* Encryption/password status for QPDFJob */
-enum qpdf_encryption_status_e {
-    qpdf_es_encrypted = 1 << 0,
-    qpdf_es_password_incorrect = 1 << 1
+enum qpdf_encryption_status_e { qpdf_es_encrypted = 1 << 0, qpdf_es_password_incorrect = 1 << 1 };
+
+/* Page label types */
+enum qpdf_page_label_e {
+    pl_none,
+    pl_digits,
+    pl_alpha_lower,
+    pl_alpha_upper,
+    pl_roman_lower,
+    pl_roman_upper,
 };
 
 #endif /* QPDFCONSTANTS_H */

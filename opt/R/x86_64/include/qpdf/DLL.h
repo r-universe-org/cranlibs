@@ -1,4 +1,4 @@
-/* Copyright (c) 2005-2022 Jay Berkenbilt
+/* Copyright (c) 2005-2024 Jay Berkenbilt
  *
  * This file is part of qpdf.
  *
@@ -25,9 +25,14 @@
 
 /* The first version of qpdf to include the version constants is 10.6.0. */
 #define QPDF_MAJOR_VERSION 11
-#define QPDF_MINOR_VERSION 1
+#define QPDF_MINOR_VERSION 9
 #define QPDF_PATCH_VERSION 1
-#define QPDF_VERSION "11.1.1"
+
+#ifdef QPDF_FUTURE
+# define QPDF_VERSION "11.9.1+future"
+#else
+# define QPDF_VERSION "11.9.1"
+#endif
 
 /*
  * This file defines symbols that control the which functions,
@@ -42,14 +47,16 @@
 #  define QPDF_DLL
 # endif
 # define QPDF_DLL_PRIVATE
-# define QPDF_DLL_CLASS
 #elif defined __GNUC__
 # define QPDF_DLL __attribute__((visibility("default")))
 # define QPDF_DLL_PRIVATE __attribute__((visibility("hidden")))
-# define QPDF_DLL_CLASS QPDF_DLL
 #else
 # define QPDF_DLL
 # define QPDF_DLL_PRIVATE
+#endif
+#ifdef __GNUC__
+# define QPDF_DLL_CLASS QPDF_DLL
+#else
 # define QPDF_DLL_CLASS
 #endif
 
@@ -86,6 +93,9 @@ for a more in-depth discussion.
     not necessary, and doing it right is complex in our case of being
     multi-platform and building both static and shared libraries that
     use the same headers, so we don't bother.
+
+  * If we don't export base classes with mingw, the vtables don't end
+    up in the DLL.
 
 * On Linux (and other similar systems):
 

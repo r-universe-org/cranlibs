@@ -1,0 +1,13 @@
+prefix=/opt/R/x86_64
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libarchive
+Description: library that can create and read several streaming archive formats
+Version: 3.7.7
+Cflags: -I${includedir}
+Cflags.private: -DLIBARCHIVE_STATIC
+Libs: -L${libdir} -larchive
+Libs.private: -llzma -lzstd -llz4 -lb2 -lbz2  -lz -liconv -lxml2 -lpthread -lz -lm
+Requires.private: 

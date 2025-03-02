@@ -17,10 +17,10 @@
 #define FLINT_KNOW_STRONG_ORDER 1
 
 /* Define to set threshold for when to use fft_small module */
-#define FLINT_FFT_SMALL_THRESHOLD 1540
+/* #undef FLINT_FFT_SMALL_THRESHOLD */
 
 /* Define if system has the ADX instruction set */
-#define FLINT_HAVE_ADX 1
+/* #undef FLINT_HAVE_ADX */
 
 /* Define if system has AVX2 */
 /* #undef FLINT_HAVE_AVX2 */
@@ -29,7 +29,7 @@
 /* #undef FLINT_HAVE_AVX512 */
 
 /* Define to use the fft_small module */
-#define FLINT_HAVE_FFT_SMALL 1
+/* #undef FLINT_HAVE_FFT_SMALL */
 
 /* Define to enable reentrant. */
 /* #undef FLINT_REENTRANT */

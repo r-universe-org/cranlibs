@@ -1,13 +1,13 @@
-	    SUMMARY OF THE HDF5 CONFIGURATION
-	    =================================
+        SUMMARY OF THE HDF5 CONFIGURATION
+        =================================
 
 General Information:
 -------------------
-                   HDF5 Version: 1.12.2
-                  Configured on: Sun Jan  5 03:23:22 EST 2025
-                  Configured by: urbanek@ipyr
-                    Host system: x86_64-apple-darwin22.4.0
-              Uname information: Darwin ipyr 22.4.0 Darwin Kernel Version 22.4.0: Mon Mar  6 21:00:17 PST 2023; root:xnu-8796.101.5~3/RELEASE_X86_64 x86_64
+                   HDF5 Version: 1.14.5
+                  Configured on: Sun Feb 16 23:48:55 NZDT 2025
+                  Configured by: rbuild@rbuilds.local
+                    Host system: x86_64-apple-darwin22.3.0
+              Uname information: Darwin rbuilds.local 22.3.0 Darwin Kernel Version 22.3.0: Mon Jan 30 20:37:48 PST 2023; root:xnu-8792.81.3~2/RELEASE_ARM64_VMAPPLE x86_64
                        Byte sex: little-endian
              Installation point: /opt/R/x86_64
 
@@ -34,9 +34,9 @@ Linking Options:
 Languages:
 ----------
                               C: yes
-                     C Compiler: /usr/bin/clang ( Apple clang version 14.0.3 )
+                     C Compiler: /usr/bin/clang ( Apple clang version 14.0.0 )
                        CPPFLAGS: -I/opt/R/x86_64/include
-                    H5_CPPFLAGS:   -DNDEBUG -UH5_DEBUG_API
+                    H5_CPPFLAGS:   -DNDEBUG -UH5_DEBUG_API -I/Volumes/Builds/recipes/build/src/hdf5-1.14.5/src/H5FDsubfiling
                     AM_CPPFLAGS: 
                         C Flags: 
                      H5 C Flags:  -std=c99  -Wall -Warray-bounds -Wcast-qual -Wconversion -Wdouble-promotion -Wextra -Wformat=2 -Wframe-larger-than=16384 -Wimplicit-fallthrough -Wnull-dereference -Wunused-const-variable -Wwrite-strings -Wpedantic -Wvolatile-register-var -Wno-c++-compat     -Wbad-function-cast -Wimplicit-function-declaration -Wincompatible-pointer-types -Wmissing-declarations -Wpacked -Wshadow -Wswitch -Wno-error=incompatible-pointer-types-discards-qualifiers -Wunused-function -Wunused-variable -Wunused-parameter -Wcast-align -Wformat -Wno-missing-noreturn -O3
@@ -47,7 +47,13 @@ Languages:
 
                         Fortran: no
 
-                            C++: no
+                            C++: yes
+                   C++ Compiler: /usr/bin/clang++ ( Apple clang version 14.0.0 )
+                      C++ Flags: 
+                   H5 C++ Flags:   -std=c++11 -Wall -Warray-bounds -Wcast-qual -Wconversion -Wdouble-promotion -Wextra -Wformat=2 -Wframe-larger-than=16384 -Wimplicit-fallthrough -Wnull-dereference -Wunused-const-variable -Wwrite-strings -Wpedantic -Wvolatile-register-var -Wno-c++-compat     -Wbad-function-cast -Wimplicit-function-declaration -Wincompatible-pointer-types -Wmissing-declarations -Wpacked -Wshadow -Wswitch -Wno-error=incompatible-pointer-types-discards-qualifiers -Wunused-function -Wunused-variable -Wunused-parameter -Wcast-align -Wformat -O3
+                   AM C++ Flags: 
+             Shared C++ Library: no
+             Static C++ Library: yes
 
                            Java: no
 
@@ -61,22 +67,21 @@ Features:
 Dimension scales w/ new references: no
                   Build HDF5 Tests: yes
                   Build HDF5 Tools: yes
+                   Build GIF Tools: no
                       Threadsafety: no
-               Default API mapping: v112
+               Default API mapping: v114
     With deprecated public symbols: yes
             I/O filters (external): deflate(zlib),szip(no encoder)
-                               MPE: no
+                  _Float16 support: no
                      Map (H5M) API: no
                         Direct VFD: no
                         Mirror VFD: no
+                     Subfiling VFD: no
                 (Read-Only) S3 VFD: no
               (Read-Only) HDFS VFD: no
-                           dmalloc: no
     Packages w/ extra debug output: none
                        API tracing: no
               Using memory checker: no
-   Memory allocation sanity checks: no
-            Function stack tracing: no
                   Use file locking: best-effort
          Strict file format checks: no
       Optimization instrumentation: no

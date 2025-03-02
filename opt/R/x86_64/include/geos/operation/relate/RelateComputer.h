@@ -38,6 +38,9 @@
 
 // Forward declarations
 namespace geos {
+namespace algorithm {
+class BoundaryNodeRule;
+}
 namespace geom {
 class Geometry;
 }
@@ -73,7 +76,7 @@ namespace relate { // geos::operation::relate
  */
 class GEOS_DLL RelateComputer {
 public:
-    RelateComputer(std::vector<geomgraph::GeometryGraph*>* newArg);
+    RelateComputer(std::vector<std::unique_ptr<geomgraph::GeometryGraph>>& newArg);
     ~RelateComputer() = default;
 
     std::unique_ptr<geom::IntersectionMatrix> computeIM();
@@ -84,7 +87,7 @@ private:
     algorithm::PointLocator ptLocator;
 
     /// the arg(s) of the operation
-    std::vector<geomgraph::GeometryGraph*>* arg;
+    const std::vector<std::unique_ptr<geomgraph::GeometryGraph>>& arg;
 
     geomgraph::NodeMap nodes;
 
@@ -96,7 +99,7 @@ private:
     /// the intersection point found (if any)
     geom::Coordinate invalidPoint;
 
-    void insertEdgeEnds(std::vector<geomgraph::EdgeEnd*>* ee);
+    void insertEdgeEnds(std::vector<std::unique_ptr<geomgraph::EdgeEnd>>& ee);
 
     void computeProperIntersectionIM(
         geomgraph::index::SegmentIntersector* intersector,
@@ -110,7 +113,8 @@ private:
      * If the Geometries are disjoint, we need to enter their dimension and
      * boundary dimension in the Ext rows in the IM
      */
-    void computeDisjointIM(geom::IntersectionMatrix* imX);
+    void computeDisjointIM(geom::IntersectionMatrix* imX,
+                           const algorithm::BoundaryNodeRule& boundaryNodeRule);
 
     void labelNodeEdges();
 
@@ -118,6 +122,21 @@ private:
      * update the IM with the sum of the IMs for each component
      */
     void updateIM(geom::IntersectionMatrix& imX);
+
+    /**
+     * Compute the IM entry for the intersection of the boundary
+     * of a geometry with the Exterior.
+     * This is the nominal dimension of the boundary
+     * unless the boundary is empty, in which case it is {@link Dimension#FALSE}.
+     * For linear geometries the Boundary Node Rule determines
+     * whether the boundary is empty.
+     *
+     * @param geom the geometry providing the boundary
+     * @param boundaryNodeRule  the Boundary Node Rule to use
+     * @return the IM dimension entry
+     */
+    static int getBoundaryDim(const geom::Geometry& geom,
+                              const algorithm::BoundaryNodeRule& boundaryNodeRule);
 
     /**
      * Processes isolated edges by computing their labelling and adding them
